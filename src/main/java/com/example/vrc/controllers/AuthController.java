@@ -30,6 +30,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserWithoutPasswordDTO> login(@Valid @RequestBody RUserCredentials userCredentials, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
-        return new ResponseEntity<>(this.authService.login(userCredentials), HttpStatus.CREATED);
+        return new ResponseEntity<>(this.authService.login(userCredentials), HttpStatus.OK);
     }
 }
