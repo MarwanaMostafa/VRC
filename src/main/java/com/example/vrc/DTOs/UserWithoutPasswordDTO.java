@@ -3,15 +3,22 @@ package com.example.vrc.DTOs;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * DTO for {@link com.example.vrc.models.UserEntity}
- */
+
 public class UserWithoutPasswordDTO implements Serializable {
     private final Long id;
     private final String firstName;
     private final String lastName;
     private final String email;
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    private String token;
     public UserWithoutPasswordDTO(Long id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;

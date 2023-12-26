@@ -1,5 +1,6 @@
 package com.example.vrc.services.impl;
 
+import com.example.vrc.utilities.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class AuthServiceImpl implements AuthService {
     private UserMapper userMapper;
     @Autowired
     private UserWithoutPasswordMapper userWithoutPasswordMapper;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public UserWithoutPasswordDTO signUp(UserDTO userDTO) throws ResponseStatusException {
@@ -54,6 +57,9 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect Password!");
         }
 
-        return this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(user));
-    }
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        UserWithoutPasswordDTO userWithoutPasswordDTO = this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(user));
+        userWithoutPasswordDTO.setToken(token);
+        return userWithoutPasswordDTO;    }
 }
