@@ -1,4 +1,4 @@
-package com.example.vrc.controllers;
+package com.example.vrc.authentication.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.vrc.DTOs.UserDTO;
-import com.example.vrc.DTOs.UserWithoutPasswordDTO;
-import com.example.vrc.models.RUserCredentials;
-import com.example.vrc.services.AuthService;
-import com.example.vrc.utilities.UserInputsValidator;
+import com.example.vrc.authentication.DTOs.UserDTO;
+import com.example.vrc.authentication.services.AuthService;
+import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
+import com.example.vrc.authentication.models.RUserCredentials;
+import com.example.vrc.authentication.utilities.UserInputsValidator;
 
 @RestController
 public class AuthController {

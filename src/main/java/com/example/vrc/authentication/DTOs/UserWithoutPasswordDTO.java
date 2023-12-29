@@ -1,4 +1,4 @@
-package com.example.vrc.DTOs;
+package com.example.vrc.authentication.DTOs;
 
 import java.io.Serializable;
 import java.util.Objects;

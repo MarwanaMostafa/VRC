@@ -1,19 +1,19 @@
-package com.example.vrc.services.impl;
+package com.example.vrc.authentication.services.impl;
 
-import com.example.vrc.utilities.JwtUtil;
+import com.example.vrc.authentication.DTOs.UserDTO;
+import com.example.vrc.authentication.utilities.JwtUtil;
+import com.example.vrc.authentication.utilities.UserPasswordEncryption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.vrc.services.AuthService;
-import com.example.vrc.services.UserService;
-import com.example.vrc.DTOs.UserDTO;
-import com.example.vrc.DTOs.UserWithoutPasswordDTO;
-import com.example.vrc.mappers.UserMapper;
-import com.example.vrc.mappers.UserWithoutPasswordMapper;
-import com.example.vrc.models.RUserCredentials;
-import com.example.vrc.utilities.UserPasswordEncryption;
+import com.example.vrc.authentication.services.AuthService;
+import com.example.vrc.authentication.services.UserService;
+import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
+import com.example.vrc.authentication.mappers.UserMapper;
+import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
+import com.example.vrc.authentication.models.RUserCredentials;
 
 @Service
 public class AuthServiceImpl implements AuthService {

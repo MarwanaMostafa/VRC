@@ -1,16 +1,16 @@
-package com.example.vrc.services.impl;
+package com.example.vrc.authentication.services.impl;
 
+import com.example.vrc.authentication.DTOs.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.vrc.mappers.UserMapper;
-import com.example.vrc.models.UserEntity;
-import com.example.vrc.repositories.UserRepository;
-import com.example.vrc.DTOs.UserDTO;
-import com.example.vrc.services.UserService;
+import com.example.vrc.authentication.mappers.UserMapper;
+import com.example.vrc.authentication.models.UserEntity;
+import com.example.vrc.authentication.repositories.UserRepository;
+import com.example.vrc.authentication.services.UserService;
 
 import java.util.Collections;
 import java.util.Optional;

@@ -1,5 +1,6 @@
-package com.example.vrc.DTOs;
+package com.example.vrc.authentication.DTOs;
 
+import com.example.vrc.authentication.models.UserEntity;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.*;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * DTO for {@link com.example.vrc.models.UserEntity}
+ * DTO for {@link UserEntity}
  */
 
 @GroupSequence({ NotEmpty.class, Size.class, Pattern.class, Email.class, UserDTO.class })

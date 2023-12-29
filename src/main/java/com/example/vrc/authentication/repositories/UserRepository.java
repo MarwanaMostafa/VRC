@@ -1,6 +1,6 @@
-package com.example.vrc.repositories;
+package com.example.vrc.authentication.repositories;
 
-import com.example.vrc.models.UserEntity;
+import com.example.vrc.authentication.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

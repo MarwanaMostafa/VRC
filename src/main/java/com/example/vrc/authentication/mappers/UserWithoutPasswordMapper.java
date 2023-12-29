@@ -1,7 +1,7 @@
-package com.example.vrc.mappers;
+package com.example.vrc.authentication.mappers;
 
-import com.example.vrc.DTOs.UserWithoutPasswordDTO;
-import com.example.vrc.models.UserEntity;
+import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
+import com.example.vrc.authentication.models.UserEntity;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")

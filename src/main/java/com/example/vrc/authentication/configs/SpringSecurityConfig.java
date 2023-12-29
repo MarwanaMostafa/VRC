@@ -1,6 +1,6 @@
-package com.example.vrc.configs;
+package com.example.vrc.authentication.configs;
 
-import com.example.vrc.utilities.JwtRequestFilter;
+import com.example.vrc.authentication.utilities.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

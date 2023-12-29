@@ -1,6 +1,6 @@
-package com.example.vrc.services;
+package com.example.vrc.authentication.services;
 
-import com.example.vrc.DTOs.UserDTO;
+import com.example.vrc.authentication.DTOs.UserDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {

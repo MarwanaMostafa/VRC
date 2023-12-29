@@ -1,4 +1,4 @@
-package com.example.vrc.utilities;
+package com.example.vrc.authentication.utilities;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,4 +1,4 @@
-package com.example.vrc.utilities;
+package com.example.vrc.authentication.utilities;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;

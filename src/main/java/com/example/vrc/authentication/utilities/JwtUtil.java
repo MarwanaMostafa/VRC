@@ -1,4 +1,4 @@
-package com.example.vrc.utilities;
+package com.example.vrc.authentication.utilities;
 
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;

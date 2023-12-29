@@ -1,6 +1,6 @@
-package com.example.vrc.utilities;
+package com.example.vrc.authentication.utilities;
 
-import com.example.vrc.services.UserService;
+import com.example.vrc.authentication.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

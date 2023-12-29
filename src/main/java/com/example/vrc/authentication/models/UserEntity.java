@@ -1,4 +1,4 @@
-package com.example.vrc.models;
+package com.example.vrc.authentication.models;
 
 import jakarta.persistence.*;
 
