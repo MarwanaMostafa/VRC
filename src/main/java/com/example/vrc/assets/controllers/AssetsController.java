@@ -23,14 +23,33 @@ public class AssetsController {
         this.modelsAssetsService = modelsAssetsService;
         this.hdrisAssetsService = hdrisAssetsService;
     }
-    @GetMapping("models/{pageNumber}")
+    @GetMapping("models/")
+    public ResponseEntity<Object> getModelsObjects() throws IOException, InterruptedException{
+        return getModelsObjects(1);
+    }
+    @GetMapping("models/{pageNumber}/")
     public ResponseEntity<Object> getModelsObjects(@PathVariable int pageNumber) throws IOException, InterruptedException {
         JSONArray cur = modelsAssetsService.fetchObjects(pageNumber);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
     }
-    @GetMapping("hdris/{pageNumber}")
+    @GetMapping("models/{query}/{pageNumber}")
+    public ResponseEntity<Object> getModelsObjectsByName(@PathVariable String query , @PathVariable int pageNumber) throws IOException, InterruptedException {
+        JSONArray cur = modelsAssetsService.fetchObjectsByName(query, pageNumber);
+        return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
+    }
+    @GetMapping("hdris/")
+    public ResponseEntity<Object> getHdrisObjects() throws IOException, InterruptedException{
+        return getHdrisObjects(1);
+    }
+    @GetMapping("hdris/{pageNumber}/")
     public ResponseEntity<Object> getHdrisObjects(@PathVariable int pageNumber) throws IOException, InterruptedException{
         JSONArray cur = hdrisAssetsService.fetchObjects(pageNumber);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
     }
+    @GetMapping("hdris/{query}/pageNumber")
+    public ResponseEntity<Object> getHdrisObjectsByName(@PathVariable String query , @PathVariable int pageNumber) throws IOException, InterruptedException {
+        JSONArray cur = hdrisAssetsService.fetchObjectsByName(query, pageNumber);
+        return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
+    }
+
 }
