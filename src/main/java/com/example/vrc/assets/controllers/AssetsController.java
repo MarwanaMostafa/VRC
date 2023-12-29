@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("api/")
 public class AssetsController {
@@ -22,12 +24,12 @@ public class AssetsController {
         this.hdrisAssetsService = hdrisAssetsService;
     }
     @GetMapping("models/{pageNumber}")
-    public ResponseEntity<Object> getModelsObjects(@PathVariable int pageNumber){
+    public ResponseEntity<Object> getModelsObjects(@PathVariable int pageNumber) throws IOException, InterruptedException {
         JSONArray cur = modelsAssetsService.fetchObjects(pageNumber);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
     }
     @GetMapping("hdris/{pageNumber}")
-    public ResponseEntity<Object> getHdrisObjects(@PathVariable int pageNumber){
+    public ResponseEntity<Object> getHdrisObjects(@PathVariable int pageNumber) throws IOException, InterruptedException{
         JSONArray cur = hdrisAssetsService.fetchObjects(pageNumber);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
     }
