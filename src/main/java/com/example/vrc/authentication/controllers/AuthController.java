@@ -15,7 +15,7 @@ import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.services.AuthService;
 import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
 import com.example.vrc.authentication.models.RUserCredentials;
-import com.example.vrc.authentication.utilities.UserInputsValidator;
+import com.example.vrc.shared.utilities.UserInputsValidator;
 
 @RestController
 @RequestMapping("/api")
@@ -24,7 +24,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserWithoutPasswordDTO> signUp(@Valid @RequestBody UserDTO userDTO, Errors errors) throws RuntimeException {
+    public ResponseEntity<UserWithoutPasswordDTO> signUp(@Valid @RequestBody UserDTO userDTO, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
         return new ResponseEntity<>(this.authService.signUp(userDTO), HttpStatus.CREATED);
     }
