@@ -46,7 +46,7 @@ public class AssetsController {
         JSONArray cur = hdrisAssetsService.fetchObjects(pageNumber);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
     }
-    @GetMapping("hdris/{query}/pageNumber")
+    @GetMapping("hdris/{query}/{pageNumber}/")
     public ResponseEntity<Object> getHdrisObjectsByName(@PathVariable String query , @PathVariable int pageNumber) throws IOException, InterruptedException {
         JSONArray cur = hdrisAssetsService.fetchObjectsByName(query, pageNumber);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
