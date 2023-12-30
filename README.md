@@ -1,11 +1,9 @@
 # VRC
 
----
-
 # Branching Strategy 
 
+## Master Branch  🏆  🚀 
 
-## Master Branch  🏆  🚀
 The master branch is the main branch of the project. It represents the stable, production-ready version of the code.
 
 ---
