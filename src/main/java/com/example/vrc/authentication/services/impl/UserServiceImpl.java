@@ -28,7 +28,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserEntity userEntity = this.userRepository.save(this.userMapper.toEntity(userDTO));
         return this.userMapper.toDto(userEntity);
     }
+    @Override
+    public void changePassword(String userEmail , String newPassword) {
+        Optional<UserEntity> userEntityOpt = this.userRepository.findByEmail(userEmail);
 
+        if (userEntityOpt.isPresent()) {
+            UserEntity userEntity = userEntityOpt.get();
+            userEntity.setPassword(newPassword);
+            this.userRepository.save(userEntity); // Save the updated user entity
+            this.userMapper.toDto(userEntity);
+        }
+
+    }
     @Override
     public UserDTO getUserById(Long userId) {
         Optional<UserEntity> userEntityOpt = this.userRepository.findById(userId);

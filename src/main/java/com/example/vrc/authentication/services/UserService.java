@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {
     UserDTO createUser(UserDTO userDTO);
-
+    public void changePassword(String userEmail , String newPassword) ;
     UserDTO getUserById(Long userId);
 
     UserDTO getUserByEmail(String userEmail);
