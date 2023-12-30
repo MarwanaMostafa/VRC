@@ -12,6 +12,7 @@ import java.net.http.HttpResponse;
 public class Asset {
     protected static String curModelName;
     private boolean fetched = false;
+    private int numberOfModelsPerPage = 10;
     private JSONArray objectsName;
     private JSONArray searchedObjectsName = new JSONArray();
     protected JSONArray models = new JSONArray();
@@ -29,7 +30,6 @@ public class Asset {
     }
     public JSONArray putObjectsInModels(int pageNumber , JSONArray names) throws IOException, InterruptedException {
         models = new JSONArray();
-        int numberOfModelsPerPage = 10;
         int startIdx = (pageNumber - 1) * numberOfModelsPerPage;
         int endIdx = Math.min(startIdx + numberOfModelsPerPage, names.length());
         HttpClient client = HttpClient.newHttpClient();
@@ -44,15 +44,16 @@ public class Asset {
         }
         return models;
     }
-    public JSONArray fetchObjects(int pageNumber) throws IOException, InterruptedException {
+    public JSONArray fetchObjects(String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
+        numberOfModelsPerPage = pageSize;
         if(!fetched){
             fetchObjectsName();
         }
+        if(!query.isEmpty()){
+            filterObjectsByName(query);
+            return putObjectsInModels(pageNumber , searchedObjectsName);
+        }
         return putObjectsInModels(pageNumber , objectsName);
-    }
-    public JSONArray fetchObjectsByName(String query , int pageNumber) throws IOException, InterruptedException {
-        filterObjectsByName(query);
-        return putObjectsInModels(pageNumber , searchedObjectsName);
     }
     private void parseObjectsName(String responseBody){
         JSONObject allObjects = new JSONObject(responseBody);
@@ -60,6 +61,7 @@ public class Asset {
     }
     private void filterObjectsByName(String query) throws IOException, InterruptedException {
         query = query.replace('-' , '_');
+        query = query.replace(' ' , '_');
         query = query.toLowerCase();
         if(query.equals(lastSearchedQuery)) return;
         lastSearchedQuery = query;
