@@ -7,6 +7,7 @@
 The master branch is the main branch of the project. It represents the stable, production-ready version of the code.
 
 ---
+
 ## Feature Branches  🧩
 For each new feature or task, a dedicated feature branch should be created. Feature branches are essential for developing and isolating changes related to specific features or tasks.
 
@@ -35,6 +36,7 @@ Replace "your-name" with your name or identifier like **`Marwan, Islam, Rana, Em
  task/marwan/forget-password
 ```
 ---
+
 # Pull Request (PR) Strategy 🔄 🚀
 1-Create a pull request from the task branch to the feature branch. A team member should review the pull request. 📤📋🚀🧩
 
