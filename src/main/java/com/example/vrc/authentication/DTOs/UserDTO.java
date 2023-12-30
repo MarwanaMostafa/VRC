@@ -34,7 +34,7 @@ public class UserDTO implements Serializable {
 
     @NotEmpty(message = "The field 'password' is required!", groups = NotEmpty.class)
     @Size(min = 8, message = "The field 'password' should have minimum 8 characters!", groups = Size.class)
-    private final String password;
+    private String password;
 
     public UserDTO(Long id, String firstName, String lastName, String email, String password) {
         this.id = id;
@@ -46,6 +46,10 @@ public class UserDTO implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {

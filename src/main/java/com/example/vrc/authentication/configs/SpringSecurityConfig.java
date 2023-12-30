@@ -21,7 +21,7 @@ public class SpringSecurityConfig {
         return
             http
                     .csrf().disable()
-                    .authorizeHttpRequests().requestMatchers("/api/sign-up","/api/login", "/error").permitAll()
+                    .authorizeHttpRequests().requestMatchers("/sign-up","/login", "/error","/forgot-password","/set-password").permitAll()
                     .anyRequest().authenticated().and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                     .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
