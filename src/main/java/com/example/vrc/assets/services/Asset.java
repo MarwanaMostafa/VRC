@@ -10,10 +10,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class Asset {
-    private boolean fetched = false;
     protected static String curModelName;
+    private boolean fetched = false;
+    private int numberOfModelsPerPage = 10;
     private JSONArray objectsName;
+    private JSONArray searchedObjectsName = new JSONArray();
     protected JSONArray models = new JSONArray();
+    private String lastSearchedQuery = "";
     protected String type = "";
 
     private void fetchObjectsName() throws IOException, InterruptedException {
@@ -25,17 +28,13 @@ public class Asset {
         parseObjectsName(responseBody.body());
         fetched = true;
     }
-    public JSONArray fetchObjects(int pageNumber) throws IOException, InterruptedException {
-        models.clear();
-        if (!fetched) {
-            fetchObjectsName();
-        }
-        int numberOfModelsPerPage = 10;
+    public JSONArray putObjectsInModels(int pageNumber , JSONArray names) throws IOException, InterruptedException {
+        models = new JSONArray();
         int startIdx = (pageNumber - 1) * numberOfModelsPerPage;
-        int endIdx = Math.min(startIdx + numberOfModelsPerPage, objectsName.length());
+        int endIdx = Math.min(startIdx + numberOfModelsPerPage, names.length());
         HttpClient client = HttpClient.newHttpClient();
         for(int i = startIdx ; i < endIdx ; i++){
-            curModelName = objectsName.get(i).toString();
+            curModelName = names.get(i).toString();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(String.format("https://api.polyhaven.com/files/%s" ,curModelName)))
                     .build();
@@ -45,9 +44,37 @@ public class Asset {
         }
         return models;
     }
+    public JSONArray fetchObjects(String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
+        numberOfModelsPerPage = pageSize;
+        if(!fetched){
+            fetchObjectsName();
+        }
+        if(!query.isEmpty()){
+            filterObjectsByName(query);
+            return putObjectsInModels(pageNumber , searchedObjectsName);
+        }
+        return putObjectsInModels(pageNumber , objectsName);
+    }
     private void parseObjectsName(String responseBody){
         JSONObject allObjects = new JSONObject(responseBody);
         objectsName = allObjects.names();
+    }
+    private void filterObjectsByName(String query) throws IOException, InterruptedException {
+        query = query.replace('-' , '_');
+        query = query.replace(' ' , '_');
+        query = query.toLowerCase();
+        if(query.equals(lastSearchedQuery)) return;
+        lastSearchedQuery = query;
+        if(!fetched){
+            fetchObjectsName();
+        }
+        searchedObjectsName = new JSONArray();
+        for(int i = 0 ; i < objectsName.length() ; i++){
+            String currentName = objectsName.get(i).toString();
+            if(currentName.contains(query)){
+                searchedObjectsName.put(currentName);
+            }
+        }
     }
     protected void parseModelObject(String responseBody){
     }
