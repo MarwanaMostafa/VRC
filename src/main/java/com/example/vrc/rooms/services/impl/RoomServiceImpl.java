@@ -1,7 +1,12 @@
 package com.example.vrc.rooms.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.mappers.UserMapper;
@@ -27,6 +32,7 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     private UserWithoutPasswordMapper userWithoutPasswordMapper;
 
+    @Override
     public RoomDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
         UserDTO userDTO = userService.getUserByEmail(userEmail);
 
@@ -44,23 +50,25 @@ public class RoomServiceImpl implements RoomService {
         return this.roomMapper.toDto(room);
     }
 
-    public RoomDTO updateRoom(RoomWithoutUserDTO roomInfo) {
-        return this.roomRepository.findById(roomInfo.getId()).map(roomEntity -> {
-                roomEntity.setTitle(roomInfo.getTitle());
-                roomEntity.setDescription(roomInfo.getDescription());
-                roomEntity.setState(roomInfo.getState());
-                roomEntity.setIsPublic(roomInfo.getIsPublic());
-
-                return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
-            }).orElse(null);
-    }
-
     @Override
-    public RoomDTO saveRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
-        if(roomInfo.getId() != null && this.roomRepository.existsById(roomInfo.getId())) {
-            return this.updateRoom(roomInfo);
+    public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
+
+        if(roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
 
-        return this.createRoom(roomInfo, userEmail);
+        RoomEntity roomEntity = roomOptional.get();
+
+        if(!roomEntity.getUser().getEmail().equals(userEmail)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to update this room!");
+        }
+
+        roomEntity.setTitle(roomInfo.getTitle());
+        roomEntity.setDescription(roomInfo.getDescription());
+        roomEntity.setState(roomInfo.getState());
+        roomEntity.setIsPublic(roomInfo.getIsPublic());
+
+        return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
 }

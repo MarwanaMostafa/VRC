@@ -25,7 +25,7 @@ public class RoomWithoutUserDTO implements Serializable {
     @Size(max = 250, message = "The field 'description' should have maximum 250 characters!", groups = Size.class)
     private final String description;
 
-    @NotEmpty(message = "The field 'state' is required!", groups = NotEmpty.class)
+    @NotNull(message = "The field 'state' is required!", groups = NotNull.class)
     private final String state;
 
     @NotNull(message = "The field 'isPublic' is required!", groups = NotNull.class)
