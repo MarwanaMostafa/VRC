@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -14,6 +15,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+    private final String[] allowedURLs = {
+        "/h2-console/**", "/error",
+        "/api/sign-up", "/api/login", "/forgot-password", "/set-password"
+    };
+
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
@@ -22,10 +28,13 @@ public class SpringSecurityConfig {
         return
             http
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .csrf().disable()
-                .authorizeHttpRequests().requestMatchers("/h2-console/**", "/api/sign-up", "/api/login", "/error", "/forgot-password","/set-password").permitAll()
-                .anyRequest().authenticated().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizationManager ->
+                    authorizationManager
+                        .requestMatchers(allowedURLs).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
