@@ -16,8 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SpringSecurityConfig {
     private final String[] allowedURLs = {
-        "/h2-console/**", "/error",
-        "/api/sign-up", "/api/login", "/forgot-password", "/set-password"
+        "/h2-console/**", "/error","/v3/api-docs","/v3/api-docs/**", "/swagger-ui/**",
+        "/api/sign-up", "/api/login", "/api/forgot-password", "/set-password"
     };
 
     @Autowired
