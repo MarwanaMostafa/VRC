@@ -60,7 +60,7 @@ public class RoomServiceImpl implements RoomService {
 
         RoomEntity roomEntity = roomOptional.get();
 
-        if(!roomEntity.getUser().getEmail().equals(userEmail)) {
+        if(!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to update this room!");
         }
 
