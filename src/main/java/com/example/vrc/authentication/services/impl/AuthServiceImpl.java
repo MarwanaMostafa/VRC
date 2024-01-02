@@ -48,6 +48,9 @@ public class AuthServiceImpl implements AuthService {
                 UserPasswordEncryption.encodePassword(userDTO.getPassword())
         ));
 
+        String token = jwtUtil.generateToken(user.getEmail());
+        userWithoutPasswordDTO.setToken(token);
+
         return this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(user));
     }
 
