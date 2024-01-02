@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
     @Override
     public void changePassword(String userEmail , String newPassword) {
-        Optional<UserEntity> userEntityOpt = this.userRepository.findByEmail(userEmail);
+        Optional<UserEntity> userEntityOpt = this.userRepository.findByEmailIgnoreCase(userEmail);
 
         if (userEntityOpt.isPresent()) {
             UserEntity userEntity = userEntityOpt.get();
@@ -48,13 +48,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDTO getUserByEmail(String userEmail) {
-        Optional<UserEntity> userEntityOpt = this.userRepository.findByEmail(userEmail);
+        Optional<UserEntity> userEntityOpt = this.userRepository.findByEmailIgnoreCase(userEmail);
         return userEntityOpt.map(user -> this.userMapper.toDto(user)).orElse(null);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(username)
+        UserEntity user = userRepository.findByEmailIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), Collections.emptyList());
     }
