@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         ));
 
         String token = jwtUtil.generateToken(user.getEmail());
-        userWithoutPasswordDTO.setToken(token);
+        user.setToken(token);
 
         return this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(user));
     }
