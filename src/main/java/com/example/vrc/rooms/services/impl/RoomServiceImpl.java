@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,12 +39,12 @@ public class RoomServiceImpl implements RoomService {
         UserDTO userDTO = userService.getUserByEmail(userEmail);
 
         RoomDTO roomDTO = new RoomDTO(
-            null,
-            roomInfo.getTitle(),
-            roomInfo.getDescription(),
-            roomInfo.getState(),
-            roomInfo.getIsPublic(),
-            this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(userDTO))
+                null,
+                roomInfo.getTitle(),
+                roomInfo.getDescription(),
+                roomInfo.getState(),
+                roomInfo.getIsPublic(),
+                this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(userDTO))
         );
 
         RoomEntity room = this.roomRepository.save(this.roomMapper.toEntity(roomDTO));
@@ -54,13 +56,13 @@ public class RoomServiceImpl implements RoomService {
     public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
 
-        if(roomOptional.isEmpty()) {
+        if (roomOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
 
         RoomEntity roomEntity = roomOptional.get();
 
-        if(!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
+        if (!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to update this room!");
         }
 
@@ -68,6 +70,31 @@ public class RoomServiceImpl implements RoomService {
         roomEntity.setDescription(roomInfo.getDescription());
         roomEntity.setState(roomInfo.getState());
         roomEntity.setIsPublic(roomInfo.getIsPublic());
+
+        return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
+    }
+
+    @Override
+    public List<RoomDTO> getRooms(String userEmail) {
+        List<RoomEntity> rooms = roomRepository.findAll();
+        List<RoomDTO> roomDTOS = new ArrayList<>();
+        for (RoomEntity i : rooms) {
+            roomDTOS.add(this.roomMapper.toDto(i));
+        }
+        return roomDTOS;
+
+    }
+
+    @Override
+    public RoomDTO getRoomByID(UUID roomID) {
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
+
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+
+        RoomEntity roomEntity = roomOptional.get();
+
 
         return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
