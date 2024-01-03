@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,12 @@ public class AuthController {
     public ResponseEntity<UserWithoutPasswordDTO> login(@Valid @RequestBody RUserCredentials userCredentials, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
         return new ResponseEntity<>(this.authService.login(userCredentials), HttpStatus.OK);
+    }
 
+    @GetMapping("/auto-login")
+    public ResponseEntity<UserWithoutPasswordDTO> autoLogin(Authentication auth) {
+        String userEmail = auth.getName();
+        return new ResponseEntity<>(this.authService.autoLogin(userEmail), HttpStatus.OK);
     }
 
     @PutMapping("/forgot-password")

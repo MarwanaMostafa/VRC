@@ -74,6 +74,17 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public UserWithoutPasswordDTO autoLogin(String email) throws ResponseStatusException {
+        UserDTO user = this.userService.getUserByEmail(email);
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with the entered email!");
+        }
+
+        return this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(user));
+    }
+
+    @Override
     public String forgotPassword(String email) {
         UserDTO user = this.userService.getUserByEmail(email);
         if (user == null) {
