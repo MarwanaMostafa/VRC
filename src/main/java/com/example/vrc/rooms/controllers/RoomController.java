@@ -22,7 +22,7 @@ import com.example.vrc.rooms.mappers.RoomMapper;
 import com.example.vrc.rooms.mappers.RoomWithoutUserMapper;
 import com.example.vrc.shared.utilities.UserInputsValidator;
 
-@Controller
+@RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
     @Autowired
