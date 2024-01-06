@@ -61,7 +61,7 @@ public class AuthController {
         return new ResponseEntity<>(this.authService.signUp(userDTO), HttpStatus.CREATED);
     }
 
-    @Operation(summary = API_POST_AUTO_LOG_IN_VALUES, description = API_POST_AUTO_LOG_IN_DESCRIPTION)
+    @Operation(summary = API_GET_AUTO_LOG_IN_VALUES, description = API_GET_AUTO_LOG_IN_DESCRIPTION)
     @GetMapping("/auto-login")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Auto Login successful"),
@@ -74,7 +74,7 @@ public class AuthController {
         return new ResponseEntity<>(this.authService.autoLogin(userEmail), HttpStatus.OK);
     }
 
-    @Operation(summary = API_POST_FORGET_PASSWORD_VALUES, description = API_POST_FORGET_PASSWORD_DESCRIPTION)
+    @Operation(summary = API_PUT_FORGET_PASSWORD_VALUES, description = API_PUT_FORGET_PASSWORD_DESCRIPTION)
     @PutMapping("/forgot-password")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Forgot Password  successful Please check your email",content = @Content (examples = @ExampleObject(value="{\"email\": \"marwanmostafa2001@hotmail.com\"}"))),
@@ -86,7 +86,7 @@ public class AuthController {
         return new ResponseEntity<>(this.authService.forgotPassword(email), HttpStatus.OK);
     }
 
-    @Operation(summary = API_POST_SET_PASSWORD_VALUES, description = API_POST_SET_PASSWORD_DESCRIPTION)
+    @Operation(summary = API_PUT_SET_PASSWORD_VALUES, description = API_PUT_SET_PASSWORD_DESCRIPTION)
     @PutMapping("/set-password")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Set Password successful use new password when login again",content = @Content(examples =@ExampleObject ("{\"password\": \"12341234\",\n \"repeatedPassword\": \"12341234\"\n}"))),
