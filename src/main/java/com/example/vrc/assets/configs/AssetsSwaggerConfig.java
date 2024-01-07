@@ -4,13 +4,10 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
-import java.util.List;
 
 
 @Configuration
@@ -26,14 +23,16 @@ public class AssetsSwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("AssetsVRC")
                 .packagesToScan("com.example.vrc.assets")
-                .addOpenApiCustomizer(openApi -> customizeOpenAPI(openApi,assetsOpenApi))
+                .addOpenApiCustomizer(openApi -> customizeOpenAPI(openApi, assetsOpenApi))
                 .build();
     }
+
     private void customizeOpenAPI(OpenAPI openApi, OpenAPI apiInfoAssets) {
         openApi.info(apiInfoAssets.getInfo())
                 .externalDocs(apiInfoAssets.getExternalDocs());
     }
-    private  OpenAPI apiInfoAssets(){
+
+    private OpenAPI apiInfoAssets() {
         return new OpenAPI().info(new Info()
                         .title("VRC Assets Service")
                         .description("REST APIs for Assets service.")
@@ -41,9 +40,7 @@ public class AssetsSwaggerConfig {
                         .contact(new Contact().name("Marwan Mostafa").email("MarwanMostafa2001@hotmail.com")))
                 .externalDocs(new ExternalDocumentation()
                         .description("SpringShop Wiki Documentation")
-                        .url("https://springshop.wiki.github.org/docs"))
-                .servers(List.of(new Server().url("https://vrc-production.up.railway.app")));
-
+                        .url("https://springshop.wiki.github.org/docs"));
     }
 
 }

@@ -28,7 +28,8 @@ public class RoomSwaggerConfig {
         openApi.info(apiInfo.getInfo())
                 .externalDocs(apiInfo.getExternalDocs());
     }
-    private OpenAPI apiInfoRoom(){
+
+    private OpenAPI apiInfoRoom() {
         return new OpenAPI().info(new Info()
                         .title("VRC Room Service")
                         .description("REST APIs for Room service.")
