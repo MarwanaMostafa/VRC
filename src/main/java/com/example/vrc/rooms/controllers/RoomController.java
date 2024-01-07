@@ -31,6 +31,7 @@ import com.example.vrc.shared.utilities.UserInputsValidator;
 @Tag(name = API_NAME,description = API_DESCRIPTION)
 @RestController
 @RequestMapping("/api/rooms")
+@CrossOrigin
 public class RoomController {
     @Autowired
     private RoomService roomService;
