@@ -51,6 +51,7 @@ public class AuthController {
 
     @Operation(summary = API_POST_SIGN_UP_VALUES,description = API_POST_SIGN_UP_DESCRIPTION)
     @PostMapping("/sign-up")
+    @CrossOrigin(origins = "http://allowed-origin.com")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User created successfully", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"Marwan\", \"lastName\": \"Mostafa\", \"email\": \"MarwanMostafa2001@hotmail.com\", \"password\": \"abc123\" }"))),
             @ApiResponse(responseCode= "400", description = "There is wrong in request body (like email not exist in request body)",content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"Marwan\", \"lastName\": \"Mostafa\", \"password\": \"abc123\" }"))),
