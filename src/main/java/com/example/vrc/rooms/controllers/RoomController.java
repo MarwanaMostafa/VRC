@@ -30,6 +30,8 @@ import com.example.vrc.shared.utilities.UserInputsValidator;
 
 @Tag(name = API_NAME,description = API_DESCRIPTION)
 @RestController
+@CrossOrigin(origins = "*", maxAge= 3600)
+
 @RequestMapping("/api/rooms")
 public class RoomController {
     @Autowired
