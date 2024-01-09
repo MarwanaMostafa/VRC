@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Collections;
+
 
 @Configuration
 @Profile("!Authentication")
@@ -27,7 +29,10 @@ public class AuthenticationSwaggerConfig {
 
     private void customizeOpenAPI(OpenAPI openApi, OpenAPI apiInfo) {
         openApi.info(apiInfo.getInfo())
-                .externalDocs(apiInfo.getExternalDocs());
+                .externalDocs(apiInfo.getExternalDocs()).servers(Collections.singletonList(
+                        new io.swagger.v3.oas.models.servers.Server()
+                                .url("https://vrc-production.up.railway.app")
+                                .description("Production Server")));
     }
 
     private OpenAPI apiInfoAuth() {
