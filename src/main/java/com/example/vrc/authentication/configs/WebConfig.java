@@ -1,16 +1,21 @@
 package com.example.vrc.authentication.configs;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-
-                .allowedOrigins("https://vrc-production.up.railway.app/swagger-ui/**") // Replace with your Swagger UI URL
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+        registry.addMapping("/**") // Specify the URL pattern for which CORS should be configured
+                .allowedOrigins("*") // Specify the allowed origins
+                .allowedMethods("GET", "POST", "PUT", "DELETE") // Specify the allowed HTTP methods
+                .allowedHeaders("Origin", "Content-Type", "Accept") // Specify the allowed headers
+                .allowCredentials(true); // Allow credentials such as cookies
     }
 }
