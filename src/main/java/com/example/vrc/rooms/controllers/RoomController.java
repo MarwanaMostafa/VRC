@@ -87,15 +87,11 @@ public class RoomController {
             @ApiResponse(responseCode = "500", description = "There is problem in server")
     })
     ResponseEntity<List<RoomWithoutUserDTO>> getRooms(Authentication auth) throws ResponseStatusException {
-
         String userEmail = auth.getName();
 
         List<RoomDTO> rooms = this.roomService.getRooms(userEmail);
+        List<RoomWithoutUserDTO> roomWithoutUserDTOS = this.roomWithoutUserMapper.toDtoList(this.roomMapper.toEntities(rooms));
 
-        List<RoomWithoutUserDTO> roomWithoutUserDTOS = new ArrayList<>();
-        for (RoomDTO i : rooms) {
-            roomWithoutUserDTOS.add(this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(i)));
-        }
         return new ResponseEntity<>(roomWithoutUserDTOS, HttpStatus.OK);
     }
 
@@ -108,9 +104,9 @@ public class RoomController {
             @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\" }")))
     })
     ResponseEntity<RoomWithoutUserDTO> getRoomByID(Authentication auth, @PathVariable UUID roomID) throws ResponseStatusException {
+        String userEmail = auth.getName();
 
-
-        RoomDTO room = this.roomService.getRoomByID(roomID);
+        RoomDTO room = this.roomService.getRoomByID(roomID, userEmail);
 
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
 

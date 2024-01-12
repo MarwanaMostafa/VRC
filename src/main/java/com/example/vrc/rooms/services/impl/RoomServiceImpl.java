@@ -76,17 +76,13 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomDTO> getRooms(String userEmail) {
-        List<RoomEntity> rooms = roomRepository.findAll();
-        List<RoomDTO> roomDTOS = new ArrayList<>();
-        for (RoomEntity i : rooms) {
-            roomDTOS.add(this.roomMapper.toDto(i));
-        }
-        return roomDTOS;
+        List<RoomEntity> rooms = roomRepository.findAllByUserEmailIgnoreCase(userEmail);
 
+        return this.roomMapper.toDtoList(rooms);
     }
 
     @Override
-    public RoomDTO getRoomByID(UUID roomID) {
+    public RoomDTO getRoomByID(UUID roomID, String userEmail) {
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
 
         if (roomOptional.isEmpty()) {
@@ -95,6 +91,9 @@ public class RoomServiceImpl implements RoomService {
 
         RoomEntity roomEntity = roomOptional.get();
 
+        if(!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail) && roomEntity.getIsPublic().equals(false)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to fetch this room!");
+        }
 
         return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
