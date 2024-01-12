@@ -1,5 +1,6 @@
 package com.example.vrc.authentication.utilities;
 
+import com.example.vrc.authentication.configs.SpringSecurityConfig;
 import com.example.vrc.authentication.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,22 +19,15 @@ import java.util.Arrays;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-    private final String[] allowedURLs = {
-            "/h2-console/**", "/error","/v3/api-docs","/v3/api-docs/**", "/swagger-ui/**",
-            "/api/sign-up", "/api/login", "/api/forgot-password", "/set-password","/api/auto-login"
-    };
-
     @Autowired
     private UserService userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
 
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return Arrays.stream(allowedURLs).anyMatch(url -> request.getRequestURI().startsWith(url));
+        return Arrays.stream(SpringSecurityConfig.allowedURLs).anyMatch(url -> request.getRequestURI().startsWith(url));
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
