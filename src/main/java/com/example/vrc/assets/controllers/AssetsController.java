@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("api/")
+@RequestMapping("/api")
 @SecurityRequirement(name = "AddToken")
 public class AssetsController {
     private final ModelsAssetsService modelsAssetsService;
@@ -23,7 +23,7 @@ public class AssetsController {
         this.modelsAssetsService = modelsAssetsService;
         this.hdrisAssetsService = hdrisAssetsService;
     }
-    @GetMapping("models/")
+    @GetMapping("/models")
     @ApiOperation(value = "Get Models Objects", notes = "Retrieve a list of models objects.")
     public ResponseEntity<Object> getModelsObjects(
             @RequestParam(name = "q") String query,
@@ -33,7 +33,7 @@ public class AssetsController {
         JSONArray cur = modelsAssetsService.fetchObjects(query, pageNumber, pageSize);
         return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
     }
-    @GetMapping("hdris/")
+    @GetMapping("/hdris")
     @ApiOperation(value = "Get HDRIs Objects", notes = "Retrieve a list of HDRIs objects.")
     public ResponseEntity<Object> getHdrisObjects(
             @RequestParam(name = "q") String query,
