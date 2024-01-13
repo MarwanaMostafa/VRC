@@ -34,6 +34,8 @@ import com.example.vrc.shared.utilities.UserInputsValidator;
 @RestController
 @RequestMapping("/api/rooms")
 @SecurityRequirement(name = "AddToken")
+@CrossOrigin(origins = "*", allowCredentials = "true")
+
 public class RoomController {
     @Autowired
     private RoomService roomService;
