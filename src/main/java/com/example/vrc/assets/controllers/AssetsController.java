@@ -3,6 +3,7 @@ package com.example.vrc.assets.controllers;
 import com.example.vrc.assets.services.HdrisAssetsService;
 import com.example.vrc.assets.services.ModelsAssetsService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("api/")
+@SecurityRequirement(name = "AddToken")
 public class AssetsController {
     private final ModelsAssetsService modelsAssetsService;
     private final HdrisAssetsService hdrisAssetsService;
