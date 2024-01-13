@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import static com.example.vrc.authentication.common.documentation.DocConstant.Au
 @Tag(name = API_NAME,description = API_DESCRIPTION)
 @RestController
 @RequestMapping("/api")
+@SecurityRequirement(name = "AddToken")
 public class AuthController {
     @Autowired
     private AuthService authService;

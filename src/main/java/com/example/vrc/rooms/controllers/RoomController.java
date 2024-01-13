@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ import com.example.vrc.shared.utilities.UserInputsValidator;
 @Tag(name = API_NAME,description = API_DESCRIPTION)
 @RestController
 @RequestMapping("/api/rooms")
+@SecurityRequirement(name = "AddToken")
+
 public class RoomController {
     @Autowired
     private RoomService roomService;
@@ -60,6 +63,8 @@ public class RoomController {
 
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
+    @CrossOrigin(origins = "https://vrc-production.up.railway.app", allowCredentials = "true")
+
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Room updated successfully", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\",\"title\": \"title\", \"description\": \"description\", \"state\": \"state\", \"isPublic\": \"booleanValue\" }"))),
             @ApiResponse(responseCode = "400", description = "There is wrong in request body (like description not exist in request body)", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"id\": \"ID\", \"title\": \"title\", \"state\": \"state\", \"isPublic\": \"booleanValue\" }"))),
