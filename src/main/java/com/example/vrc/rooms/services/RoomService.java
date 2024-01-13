@@ -12,6 +12,5 @@ public interface RoomService {
     RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
 
     List<RoomDTO> getRooms(String userEmail);
-
-    RoomDTO getRoomByID(UUID roomID);
+    RoomDTO getRoomByID(UUID roomID, String userEmail);
 }
