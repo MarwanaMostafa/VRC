@@ -23,11 +23,8 @@ public class VrcApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins("http://your-frontend-domain.com")
-						.allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
-						.allowedHeaders("Origin", "Content-Type", "Accept")
-						.allowCredentials(true);			}
+				registry.addMapping("/**").allowedOrigins("*");
+			}
 		};
 	}
 }
