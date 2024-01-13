@@ -28,6 +28,7 @@ import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.mappers.RoomMapper;
 import com.example.vrc.rooms.mappers.RoomWithoutUserMapper;
 import com.example.vrc.shared.utilities.UserInputsValidator;
+@CrossOrigin(origins = "https://vrc-production.up.railway.app/swagger-ui.html", allowCredentials = "true")
 
 @Tag(name = API_NAME,description = API_DESCRIPTION)
 @RestController
