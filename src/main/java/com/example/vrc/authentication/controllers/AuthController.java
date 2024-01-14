@@ -1,6 +1,7 @@
 package com.example.vrc.authentication.controllers;
 
 import com.example.vrc.authentication.DTOs.ResetPasswordData;
+import com.example.vrc.authentication.utilities.JwtUtil;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +28,8 @@ import com.example.vrc.authentication.models.RUserCredentials;
 import com.example.vrc.shared.utilities.UserInputsValidator;
 
 import static com.example.vrc.authentication.common.documentation.DocConstant.AuthenticationConstants.*;
-@Tag(name = API_NAME,description = API_DESCRIPTION)
+
+@Tag(name = API_NAME, description = API_DESCRIPTION)
 @RestController
 @RequestMapping("/api")
 public class AuthController {
@@ -35,10 +37,10 @@ public class AuthController {
     private AuthService authService;
 
 
-    @Operation(summary = API_POST_LOG_IN_VALUES,description = API_POST_LOG_IN_DESCRIPTION)
+    @Operation(summary = API_POST_LOG_IN_VALUES, description = API_POST_LOG_IN_DESCRIPTION)
     @PostMapping("/login")
     @ApiResponses({
-            @ApiResponse(responseCode  = "200", description = "Login successful", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"email\": \"MarwanMostafa2001@hotmail.com\", \"password\": \"abc123\" }"))),
+            @ApiResponse(responseCode = "200", description = "Login successful", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"email\": \"MarwanMostafa2001@hotmail.com\", \"password\": \"abc123\" }"))),
             @ApiResponse(responseCode = "400", description = "There is wrong in request body", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"email\": \"MarwanMostafa2001@hotmail.com\" }"))),
             @ApiResponse(responseCode = "404", description = "Resource Not found ", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"email\": \"String\", \"password\": \"String\" }"))),
             @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"email\": \"String\", \"password\": \"String\" }")))
@@ -48,11 +50,11 @@ public class AuthController {
         return new ResponseEntity<>(this.authService.login(userCredentials), HttpStatus.OK);
     }
 
-    @Operation(summary = API_POST_SIGN_UP_VALUES,description = API_POST_SIGN_UP_DESCRIPTION)
+    @Operation(summary = API_POST_SIGN_UP_VALUES, description = API_POST_SIGN_UP_DESCRIPTION)
     @PostMapping("/sign-up")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User created successfully", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"Marwan\", \"lastName\": \"Mostafa\", \"email\": \"MarwanMostafa2001@hotmail.com\", \"password\": \"abc123\" }"))),
-            @ApiResponse(responseCode= "400", description = "There is wrong in request body (like email not exist in request body)",content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"Marwan\", \"lastName\": \"Mostafa\", \"password\": \"abc123\" }"))),
+            @ApiResponse(responseCode = "400", description = "There is wrong in request body (like email not exist in request body)", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"Marwan\", \"lastName\": \"Mostafa\", \"password\": \"abc123\" }"))),
             @ApiResponse(responseCode = "404", description = "Resource Not found", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"String\", \"lastName\": \"String\", \"email\": \"String\", \"password\": \"String\" }"))),
             @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"firstName\": \"String\", \"lastName\": \"String\", \"email\": \"String\", \"password\": \"String\" }")))
     })
@@ -75,27 +77,29 @@ public class AuthController {
     }
 
     @Operation(summary = API_PUT_FORGET_PASSWORD_VALUES, description = API_PUT_FORGET_PASSWORD_DESCRIPTION)
-    @PutMapping("/forgot-password")
+    @GetMapping("/forgot-password")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Forgot Password  successful Please check your email",content = @Content (examples = @ExampleObject(value="{\"email\": \"marwanmostafa2001@hotmail.com\"}"))),
-            @ApiResponse(responseCode = "400", description = "There is wrong in request body (don't put email)",content = @Content(examples = @ExampleObject(value = "{}"))),
-            @ApiResponse(responseCode = "404", description = "Resource Not found ",content = @Content (examples = @ExampleObject(value="{\"email\": \"String\"}"))),
-            @ApiResponse(responseCode = "500", description = "There is problem in server",content = @Content (examples = @ExampleObject(value="{\"email\": \"String\"}")))
+            @ApiResponse(responseCode = "200", description = "Forgot Password  successful Please check your email", content = @Content(examples = @ExampleObject(value = "{\"email\": \"marwanmostafa2001@hotmail.com\"}"))),
+            @ApiResponse(responseCode = "400", description = "There is wrong in request body (don't put email)", content = @Content(examples = @ExampleObject(value = "{}"))),
+            @ApiResponse(responseCode = "404", description = "Resource Not found ", content = @Content(examples = @ExampleObject(value = "{\"email\": \"String\"}"))),
+            @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(examples = @ExampleObject(value = "{\"email\": \"String\"}")))
     })
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         return new ResponseEntity<>(this.authService.forgotPassword(email), HttpStatus.OK);
     }
 
     @Operation(summary = API_PUT_SET_PASSWORD_VALUES, description = API_PUT_SET_PASSWORD_DESCRIPTION)
-    @PutMapping("/set-password")
+    @PostMapping("/set-password/{token}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Set Password successful use new password when login again",content = @Content(examples =@ExampleObject ("{\"password\": \"12341234\",\n \"repeatedPassword\": \"12341234\"\n}"))),
-            @ApiResponse(responseCode = "400", description = "There is wrong in request body (don't put repeated password)",content = @Content(examples =@ExampleObject ("{\"password\": \"12341234\"\n}"))),
-            @ApiResponse(responseCode = "404", description = "Resource Not found ",content = @Content(examples =@ExampleObject ("{\"password\": \"String\",\n \"repeatedPassword\": \"String\"\n}"))),
-            @ApiResponse(responseCode = "500", description = "There is problem in server",content = @Content(examples =@ExampleObject ("{\"password\": \"String\",\n \"repeatedPassword\": \"String\"\n}")))
+            @ApiResponse(responseCode = "200", description = "Set Password successful use new password when login again", content = @Content(examples = @ExampleObject("{\"password\": \"12341234\",\n \"repeatedPassword\": \"12341234\"\n}"))),
+            @ApiResponse(responseCode = "400", description = "There is wrong in request body (don't put repeated password)", content = @Content(examples = @ExampleObject("{\"password\": \"12341234\"\n}"))),
+            @ApiResponse(responseCode = "404", description = "Resource Not found ", content = @Content(examples = @ExampleObject("{\"password\": \"String\",\n \"repeatedPassword\": \"String\"\n}"))),
+            @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(examples = @ExampleObject("{\"password\": \"String\",\n \"repeatedPassword\": \"String\"\n}")))
     })
-    public ResponseEntity<String> setPassword(@RequestBody ResetPasswordData resetPasswordData) {
-        return new ResponseEntity<>(this.authService.setPassword(resetPasswordData), HttpStatus.OK);
+    public ResponseEntity<String> setPassword(@PathVariable String token, @RequestBody ResetPasswordData resetPasswordData) {
+
+         return new ResponseEntity<>(this.authService.setPassword(resetPasswordData, token), HttpStatus.OK);
     }
+
 
 }
