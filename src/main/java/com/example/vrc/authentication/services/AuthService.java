@@ -13,5 +13,5 @@ public interface AuthService {
     UserWithoutPasswordDTO autoLogin(String email) throws  ResponseStatusException;
 
     String forgotPassword(String email);
-    String setPassword(ResetPasswordData resetPasswordData);
+    String setPassword(ResetPasswordData resetPasswordData, String token);
 }
