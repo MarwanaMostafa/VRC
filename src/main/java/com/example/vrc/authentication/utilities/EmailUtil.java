@@ -22,7 +22,7 @@ public class EmailUtil {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
         mimeMessageHelper.setTo(email);
-        String resetLink = "http://localhost:8080/api/set-password/" + token;
+        String resetLink = "https://vrc-pe8g.onrender.com/reset-password/" + token;
 
         String emailContent = String.format("<p>Click the link to set your password: <a href='%s'>%s</a></p>", resetLink, resetLink);
 
