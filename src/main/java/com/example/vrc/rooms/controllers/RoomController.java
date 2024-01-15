@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static com.example.vrc.rooms.common.documentation.DocConstant.RoomConstants.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,7 +62,6 @@ public class RoomController {
 
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
-    @CrossOrigin(origins = "https://vrc-production.up.railway.app", allowCredentials = "true")
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Room updated successfully", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\",\"title\": \"title\", \"description\": \"description\", \"state\": \"state\", \"isPublic\": \"booleanValue\" }"))),
