@@ -100,9 +100,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String setPassword(ResetPasswordData resetPasswordData, String token) {
-        String email=jwtUtil.extractUsername(token);
-
-        if (email == null) {
+        String email="";
+        try {
+            email=jwtUtil.extractUsername(token);
+        }
+        catch (Exception e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired token");
         }
 
