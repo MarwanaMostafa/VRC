@@ -19,6 +19,7 @@ public class Asset {
     private String lastSearchedQuery = "";
     protected String type = "";
 
+
     private void fetchObjectsName() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -28,8 +29,9 @@ public class Asset {
         parseObjectsName(responseBody.body());
         fetched = true;
     }
-    public JSONArray putObjectsInModels(int pageNumber , JSONArray names) throws IOException, InterruptedException {
+    public JSONObject putObjectsInModels(int pageNumber , JSONArray names) throws IOException, InterruptedException {
         models = new JSONArray();
+        JSONObject returnObject = new JSONObject();
         int startIdx = (pageNumber - 1) * numberOfModelsPerPage;
         int endIdx = Math.min(startIdx + numberOfModelsPerPage, names.length());
         HttpClient client = HttpClient.newHttpClient();
@@ -42,9 +44,11 @@ public class Asset {
                     .send(request, HttpResponse.BodyHandlers.ofString());
             parseModelObject(responseBody.body());
         }
-        return models;
+        returnObject.put("hasNext" , endIdx < names.length());
+        returnObject.put("models" , models);
+        return returnObject;
     }
-    public JSONArray fetchObjects(String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
+    public JSONObject fetchObjects(String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
         numberOfModelsPerPage = pageSize;
         if(!fetched){
             fetchObjectsName();
