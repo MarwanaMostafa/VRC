@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,9 @@ public class RoomController {
     @Autowired
     private RoomWithoutUserMapper roomWithoutUserMapper;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @Operation(summary = API_POST_CREATE_VALUES, description = API_POST_CREATE_DESCRIPTION)
     @PostMapping("/create")
     @ApiResponses({
@@ -52,10 +56,11 @@ public class RoomController {
     ResponseEntity<RoomWithoutUserDTO> createRoom(Authentication auth, @Valid @RequestBody RoomWithoutUserDTO roomDTO, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
 
-        String userEmail = auth.getName();
+        String userEmail = "marwanmostafa2001@hotmail.com";
 
         RoomDTO room = this.roomService.createRoom(roomDTO, userEmail);
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
+        messagingTemplate.convertAndSend("/topic/roomCreated", roomWithoutUserDTO);
 
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.CREATED);
     }
