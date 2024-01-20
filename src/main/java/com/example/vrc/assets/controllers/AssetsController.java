@@ -5,6 +5,7 @@ import com.example.vrc.assets.services.ModelsAssetsService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,8 @@ public class AssetsController {
             @RequestParam(name = "pageNumber") int pageNumber,
             @RequestParam(name = "pageSize") int pageSize
     ) throws IOException, InterruptedException {
-        JSONArray cur = modelsAssetsService.fetchObjects(query, pageNumber, pageSize);
-        return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
+        JSONObject cur = modelsAssetsService.fetchObjects(query, pageNumber, pageSize);
+        return new ResponseEntity<>(cur.toMap(), HttpStatus.OK);
     }
     @GetMapping("/hdris")
     @ApiOperation(value = "Get HDRIs Objects", notes = "Retrieve a list of HDRIs objects.")
@@ -40,7 +41,7 @@ public class AssetsController {
             @RequestParam(name = "pageNumber") int pageNumber,
             @RequestParam(name = "pageSize") int pageSize
     ) throws IOException, InterruptedException{
-        JSONArray cur = hdrisAssetsService.fetchObjects(query, pageNumber, pageSize);
-        return new ResponseEntity<>(cur.toList(), HttpStatus.OK);
+        JSONObject cur = hdrisAssetsService.fetchObjects(query, pageNumber, pageSize);
+        return new ResponseEntity<>(cur.toMap(), HttpStatus.OK);
     }
 }
