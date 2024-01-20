@@ -56,7 +56,7 @@ public class RoomController {
     ResponseEntity<RoomWithoutUserDTO> createRoom(Authentication auth, @Valid @RequestBody RoomWithoutUserDTO roomDTO, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
 
-        String userEmail = "marwanmostafa2001@hotmail.com";
+        String userEmail = auth.getName();
 
         RoomDTO room = this.roomService.createRoom(roomDTO, userEmail);
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
