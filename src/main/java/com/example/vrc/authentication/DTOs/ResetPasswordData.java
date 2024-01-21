@@ -5,9 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public class ResetPasswordData {
 
-    @Email(message = "Please provide a valid email address")
-    private final String email;
-
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 8, message = "The field 'password' should have minimum 8 characters!", groups = Size.class)
     private final String password;
@@ -17,18 +14,9 @@ public class ResetPasswordData {
     private final  String repeatedPassword;
 
     // Constructors, getters, and setters
-
-
     public ResetPasswordData(String email, String password, String repeatedPassword) {
-        this.email = email;
         this.password = password;
         this.repeatedPassword = repeatedPassword;
-    }
-
-    // Getters and setters for email, password, and repeatedPassword
-
-    public String getEmail() {
-        return email;
     }
 
     public String getPassword() {

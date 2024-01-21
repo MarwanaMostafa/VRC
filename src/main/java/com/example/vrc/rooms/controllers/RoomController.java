@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static com.example.vrc.rooms.common.documentation.DocConstant.RoomConstants.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +42,9 @@ public class RoomController {
     @Autowired
     private RoomWithoutUserMapper roomWithoutUserMapper;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @Operation(summary = API_POST_CREATE_VALUES, description = API_POST_CREATE_DESCRIPTION)
     @PostMapping("/create")
     @ApiResponses({
@@ -57,13 +60,12 @@ public class RoomController {
 
         RoomDTO room = this.roomService.createRoom(roomDTO, userEmail);
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
-
+        sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.CREATED);
     }
 
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
-    @CrossOrigin(origins = "https://vrc-production.up.railway.app", allowCredentials = "true")
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Room updated successfully", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\",\"title\": \"title\", \"description\": \"description\", \"state\": \"state\", \"isPublic\": \"booleanValue\" }"))),
@@ -78,7 +80,7 @@ public class RoomController {
 
         RoomDTO room = this.roomService.updateRoom(roomId, roomDTO, userEmail);
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
-
+        sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
@@ -92,17 +94,14 @@ public class RoomController {
             @ApiResponse(responseCode = "500", description = "There is problem in server")
     })
     ResponseEntity<List<RoomWithoutUserDTO>> getRooms(Authentication auth) throws ResponseStatusException {
-
         String userEmail = auth.getName();
 
         List<RoomDTO> rooms = this.roomService.getRooms(userEmail);
+        List<RoomWithoutUserDTO> roomWithoutUserDTOS = this.roomWithoutUserMapper.toDtoList(this.roomMapper.toEntities(rooms));
 
-        List<RoomWithoutUserDTO> roomWithoutUserDTOS = new ArrayList<>();
-        for (RoomDTO i : rooms) {
-            roomWithoutUserDTOS.add(this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(i)));
-        }
         return new ResponseEntity<>(roomWithoutUserDTOS, HttpStatus.OK);
     }
+
 
     @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
     @GetMapping("/get-room/{roomID}")
@@ -113,12 +112,20 @@ public class RoomController {
             @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\" }")))
     })
     ResponseEntity<RoomWithoutUserDTO> getRoomByID(Authentication auth, @PathVariable UUID roomID) throws ResponseStatusException {
+        String userEmail = auth.getName();
 
-
-        RoomDTO room = this.roomService.getRoomByID(roomID);
+        RoomDTO room = this.roomService.getRoomByID(roomID, userEmail);
 
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
 
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
+
+    void sendRoomData(String userEmail) {
+        List<RoomDTO> rooms = roomService.getRooms(userEmail);
+        List<RoomWithoutUserDTO> roomWithoutUserDTOS = roomWithoutUserMapper.toDtoList(roomMapper.toEntities(rooms));
+        messagingTemplate.convertAndSend("/topic/rooms/" + userEmail, roomWithoutUserDTOS);
+    }
+
+
 }

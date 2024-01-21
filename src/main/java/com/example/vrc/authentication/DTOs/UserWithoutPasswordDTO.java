@@ -9,6 +9,8 @@ public class UserWithoutPasswordDTO implements Serializable {
     private final String firstName;
     private final String lastName;
     private final String email;
+    private String token;
+
 
     public String getToken() {
         return token;
@@ -17,8 +19,6 @@ public class UserWithoutPasswordDTO implements Serializable {
     public void setToken(String token) {
         this.token = token;
     }
-
-    private String token;
     public UserWithoutPasswordDTO(Long id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;

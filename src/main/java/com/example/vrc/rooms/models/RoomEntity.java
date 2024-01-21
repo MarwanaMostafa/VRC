@@ -19,7 +19,7 @@ public class RoomEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "state", nullable = false)
+    @Column(name = "state", nullable = false, length = 50000)
     private String state;
 
     @Column(name = "is_public", nullable = false)

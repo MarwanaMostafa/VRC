@@ -95,21 +95,27 @@ public class AuthServiceImpl implements AuthService {
         } catch (MessagingException e) {
             throw new RuntimeException("Unable to send set password email");
         }
-
         return "Please check your email to set password";
     }
 
     @Override
-    public String setPassword(ResetPasswordData resetPasswordData) {
-        UserDTO user = this.userService.getUserByEmail(resetPasswordData.getEmail());
+    public String setPassword(ResetPasswordData resetPasswordData, String token) {
+        String email="";
+        try {
+            email=jwtUtil.extractUsername(token);
+        }
+        catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired token");
+        }
+
+        UserDTO user = this.userService.getUserByEmail(email);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with this email :" + resetPasswordData.getEmail());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with this email :" + email);
         }
         if (!resetPasswordData.getRepeatedPassword().equals(resetPasswordData.getPassword())) {
             throw new PasswordMismatchException();
         }
-        this.userService.changePassword(resetPasswordData.getEmail(), UserPasswordEncryption.encodePassword(resetPasswordData.getPassword()));
-
+        this.userService.changePassword(email, UserPasswordEncryption.encodePassword(resetPasswordData.getPassword()));
 
         return "New password set successfully login with new password";
     }
