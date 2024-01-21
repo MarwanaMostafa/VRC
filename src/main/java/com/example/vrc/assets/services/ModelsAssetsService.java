@@ -13,6 +13,7 @@ public class ModelsAssetsService extends Asset{
     @Override
     protected void parseModelObject(String responseBody){
         JSONObject modelObject = new JSONObject(responseBody);
+        if(!modelObject.has("gltf")) return;
         JSONObject gltf = modelObject.getJSONObject("gltf");
         JSONObject lowQuality = gltf.getJSONObject("1k");
         JSONObject lastGltf = lowQuality.getJSONObject("gltf");
