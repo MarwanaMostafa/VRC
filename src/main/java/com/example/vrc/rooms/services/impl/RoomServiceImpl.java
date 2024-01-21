@@ -97,4 +97,8 @@ public class RoomServiceImpl implements RoomService {
 
         return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
+    public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {
+        Optional<RoomEntity> room = roomRepository.findById(roomId);
+        return room.isPresent() && room.get().getUser().getEmail().equalsIgnoreCase(userEmail);
+    }
 }

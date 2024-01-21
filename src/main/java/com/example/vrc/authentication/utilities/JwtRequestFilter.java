@@ -37,12 +37,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
+        String query = request.getParameter("token");
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
                 username = jwtUtil.extractUsername(jwt);
-            }
-            else{
+            } else if (query != null) {
+                jwt = query;
+                username = jwtUtil.extractUsername(jwt);
+            } else{
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token is missing");
                 return;
             }

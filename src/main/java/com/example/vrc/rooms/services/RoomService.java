@@ -13,4 +13,6 @@ public interface RoomService {
 
     List<RoomDTO> getRooms(String userEmail);
     RoomDTO getRoomByID(UUID roomID, String userEmail);
+
+    boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
 }

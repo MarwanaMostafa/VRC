@@ -124,7 +124,7 @@ public class RoomController {
     void sendRoomData(String userEmail) {
         List<RoomDTO> rooms = roomService.getRooms(userEmail);
         List<RoomWithoutUserDTO> roomWithoutUserDTOS = roomWithoutUserMapper.toDtoList(roomMapper.toEntities(rooms));
-        messagingTemplate.convertAndSend("/topic/rooms", roomWithoutUserDTOS);
+        messagingTemplate.convertAndSend("/topic/rooms/" + userEmail, roomWithoutUserDTOS);
     }
 
 
