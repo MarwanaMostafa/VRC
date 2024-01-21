@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,9 @@ public class RoomController {
     @Autowired
     private RoomWithoutUserMapper roomWithoutUserMapper;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @Operation(summary = API_POST_CREATE_VALUES, description = API_POST_CREATE_DESCRIPTION)
     @PostMapping("/create")
     @ApiResponses({
@@ -56,7 +60,7 @@ public class RoomController {
 
         RoomDTO room = this.roomService.createRoom(roomDTO, userEmail);
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
-
+        sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.CREATED);
     }
 
@@ -76,7 +80,7 @@ public class RoomController {
 
         RoomDTO room = this.roomService.updateRoom(roomId, roomDTO, userEmail);
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
-
+        sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
@@ -98,6 +102,7 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTOS, HttpStatus.OK);
     }
 
+
     @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
     @GetMapping("/get-room/{roomID}")
     @ApiResponses({
@@ -115,4 +120,12 @@ public class RoomController {
 
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
+
+    void sendRoomData(String userEmail) {
+        List<RoomDTO> rooms = roomService.getRooms(userEmail);
+        List<RoomWithoutUserDTO> roomWithoutUserDTOS = roomWithoutUserMapper.toDtoList(roomMapper.toEntities(rooms));
+        messagingTemplate.convertAndSend("/topic/rooms", roomWithoutUserDTOS);
+    }
+
+
 }
