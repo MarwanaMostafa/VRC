@@ -106,6 +106,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.28</version> <!-- Use the latest version available -->
+			<scope>provided</scope>
+		</dependency>
     
 		<!-- Swagger dependencies -->
 		<dependency>

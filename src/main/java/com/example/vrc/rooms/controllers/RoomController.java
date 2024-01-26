@@ -1,5 +1,6 @@
 package com.example.vrc.rooms.controllers;
 
+import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -64,6 +65,17 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.CREATED);
     }
 
+// TODO: Add a new endpoint to add a collaborator for a specific room. Use the sharedRoom parameter, as shown in the example endpoint below.
+
+//    @Operation(summary = API_POST_CREATE_VALUES, description = API_POST_CREATE_DESCRIPTION)
+//    @PostMapping("/add-collaborator")
+//    @ApiResponses({
+//        //Add hence API Responses
+//    })
+//    ResponseEntity<String> addCollaborator(Authentication auth, @Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
+//        return new ResponseEntity<>("", HttpStatus.ACCEPTED);
+//    }
+
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
 
@@ -83,6 +95,8 @@ public class RoomController {
         sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
+
+    // TODO: Add a new endpoint to Get all Shared Rooms . as shown in the example endpoint below.
 
     //Why return the Room ID? Because if a user needs to update a specific room, they need to know the Room ID
     @Operation(summary = API_GET_ROOMS_VALUES, description = API_GET_ROOMS_DESCRIPTION)
