@@ -1,6 +1,6 @@
 package com.example.vrc.rooms.controllers;
 
-import com.example.vrc.rooms.DTOs.SharedRoomDTO;
+import com.example.vrc.rooms.DTOs.RoomIDDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -135,6 +135,22 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
+    @GetMapping("/shared-room")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Share Public room using room id  successfully", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\" }"))),
+            @ApiResponse(responseCode = "400", description = "There is wrong in request body (like ID not exist in request body)", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ }"))),
+            @ApiResponse(responseCode = "404", description = "Resource Not found", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\" }"))),
+            @ApiResponse(responseCode = "500", description = "There is problem in server", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{ \"id\": \"ID\" }")))
+    })
+    ResponseEntity<RoomWithoutUserDTO> sharedRoom(@RequestBody RoomIDDTO roomID) throws ResponseStatusException {
+
+        RoomDTO room = this.roomService.shareRoomById(roomID.getRoomID());
+
+        RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
+
+        return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
+    }
     void sendRoomData(String userEmail) {
         List<RoomDTO> rooms = roomService.getRooms(userEmail);
         List<RoomWithoutUserDTO> roomWithoutUserDTOS = roomWithoutUserMapper.toDtoList(roomMapper.toEntities(rooms));
