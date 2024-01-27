@@ -97,6 +97,15 @@ public class RoomServiceImpl implements RoomService {
 
         return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
+    @Override
+    public RoomDTO shareRoomById(UUID roomID) {
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
+        if (roomOptional.isEmpty() ||!roomOptional.get().getIsPublic()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+        return this.roomMapper.toDto(roomOptional.get());
+    }
+
     public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {
         Optional<RoomEntity> room = roomRepository.findById(roomId);
         return room.isPresent() && room.get().getUser().getEmail().equalsIgnoreCase(userEmail);

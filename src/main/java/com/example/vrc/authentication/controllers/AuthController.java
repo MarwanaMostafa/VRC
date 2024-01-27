@@ -1,7 +1,6 @@
 package com.example.vrc.authentication.controllers;
 
 import com.example.vrc.authentication.DTOs.ResetPasswordData;
-import com.example.vrc.authentication.utilities.JwtUtil;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
