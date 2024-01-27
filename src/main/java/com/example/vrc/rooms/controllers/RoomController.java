@@ -1,6 +1,7 @@
 package com.example.vrc.rooms.controllers;
 
 import com.example.vrc.rooms.DTOs.RoomIDDTO;
+import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
