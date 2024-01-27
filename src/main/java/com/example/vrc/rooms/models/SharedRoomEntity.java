@@ -19,5 +19,9 @@ public class SharedRoomEntity {
     @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity room;
 
+    public String getCollaboratorEmail() {
+        return collaboratorEmail;
+    }
+
 
 }

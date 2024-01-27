@@ -29,4 +29,5 @@ public class SharedRoomDTO {
     public UUID getId() {
         return id;
     }
+
 }

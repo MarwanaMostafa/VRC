@@ -65,14 +65,24 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
-
+        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById(roomId);
+        String collaboratorEmailOptional = "";
         if (roomOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
 
+        if(!sharedRoomOptional.isEmpty()){
+            SharedRoomEntity sharedRoom = sharedRoomOptional.get();
+            collaboratorEmailOptional = sharedRoom.getCollaboratorEmail();
+        }
+
         RoomEntity roomEntity = roomOptional.get();
 
-        if (!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
+        boolean isOwner = roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail);
+        boolean isCollaborator = roomEntity.getUser().getEmail().equalsIgnoreCase(collaboratorEmailOptional);
+
+
+        if (!isOwner && !isCollaborator) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to update this room!");
         }
 
@@ -113,20 +123,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void addCollaborator(UUID roomID, String collaboratorEmail) {
-        Optional<SharedRoomEntity> roomOptional = this.sharedRoomRepository.findById(roomID);
-        if (roomOptional.isPresent()) {
-            SharedRoomEntity room = roomOptional.get();
-            UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
-
-            SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(
-                    roomID,
-                    collaboratorEmail
-
-            );
-
-
+    public RoomDTO addCollaborator(UUID roomID, String collaboratorEmail) {
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
+        RoomEntity room = roomOptional.get();
+        UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
+
+        SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(
+                roomID,
+                collaboratorEmail
+
+        );
+        return this.roomMapper.toDto(this.roomRepository.save(room));
     }
 
     @Override

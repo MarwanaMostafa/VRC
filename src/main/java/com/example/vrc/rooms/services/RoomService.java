@@ -17,7 +17,7 @@ public interface RoomService {
 
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
 
-    void addCollaborator(UUID roomID, String collaboratorEmail);
+    RoomDTO addCollaborator(UUID roomID, String collaboratorEmail);
 
     List<SharedRoomDTO> getSharedRooms(String userEmail);
 }
