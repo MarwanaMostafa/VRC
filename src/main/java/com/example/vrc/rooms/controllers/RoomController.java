@@ -67,14 +67,28 @@ public class RoomController {
 
 // TODO: Add a new endpoint to add a collaborator for a specific room. Use the sharedRoom parameter, as shown in the example endpoint below.
 
-//    @Operation(summary = API_POST_CREATE_VALUES, description = API_POST_CREATE_DESCRIPTION)
-//    @PostMapping("/add-collaborator")
-//    @ApiResponses({
-//        //Add hence API Responses
-//    })
-//    ResponseEntity<String> addCollaborator(Authentication auth, @Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
-//        return new ResponseEntity<>("", HttpStatus.ACCEPTED);
-//    }
+    @Operation(summary = API_POST_ADD_COLLABORATOR_VALUES, description = API_POST_ADD_COLLABORATOR_DESCRIPTION)
+    @PostMapping("/add-collaborator")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Collaborator added successfully"),
+            @ApiResponse(responseCode = "400", description = "There is an issue with the request body"),
+            @ApiResponse(responseCode = "404", description = "Resource Not found"),
+            @ApiResponse(responseCode = "500", description = "There is a problem on the server")
+    })
+    ResponseEntity<String> addCollaborator(Authentication auth, @Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
+        UserInputsValidator.validate(errors);
+
+        String userEmail = auth.getName();
+
+
+        // Call a service method to add collaborator
+        roomService.addCollaborator(sharedRoom.getId(), userEmail);
+
+        // Optionally, you can return some message indicating success
+        return new ResponseEntity<>("Collaborator added successfully", HttpStatus.OK);
+
+    }
+
 
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
@@ -97,6 +111,23 @@ public class RoomController {
     }
 
     // TODO: Add a new endpoint to Get all Shared Rooms . as shown in the example endpoint below.
+    @Operation(summary = API_GET_SHARED_ROOMS_VALUES, description = API_GET_SHARED_ROOMS_DESCRIPTION)
+    @GetMapping("/get-shared-rooms")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Get all shared rooms successfully"),
+            @ApiResponse(responseCode = "400", description = "There is wrong in request body"),
+            @ApiResponse(responseCode = "404", description = "Resource Not found"),
+            @ApiResponse(responseCode = "500", description = "There is problem in server")
+    })
+    ResponseEntity<List<SharedRoomDTO>> getSharedRooms(Authentication auth) throws ResponseStatusException {
+        String userEmail = auth.getName();
+
+        List<SharedRoomDTO> sharedRoomDTOS = this.roomService.getSharedRooms(userEmail);
+
+
+        return new ResponseEntity<>(sharedRoomDTOS, HttpStatus.OK);
+    }
+
 
     //Why return the Room ID? Because if a user needs to update a specific room, they need to know the Room ID
     @Operation(summary = API_GET_ROOMS_VALUES, description = API_GET_ROOMS_DESCRIPTION)
