@@ -20,4 +20,14 @@ public class SharedRoomDTO {
 
     @NotEmpty
     private UUID id;
+
+
+    public SharedRoomDTO(UUID id,String collaboratorEmail){
+        this.id=id;
+        this.collaboratorEmail=collaboratorEmail;
+    }
+    public UUID getId() {
+        return id;
+    }
+
 }

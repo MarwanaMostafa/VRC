@@ -1,6 +1,8 @@
 package com.example.vrc.rooms.services.impl;
 
+import com.example.vrc.rooms.repositories.SharedRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.support.NullValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,11 +17,15 @@ import com.example.vrc.authentication.mappers.UserMapper;
 import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
 import com.example.vrc.authentication.services.UserService;
 import com.example.vrc.rooms.DTOs.RoomDTO;
+import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
 import com.example.vrc.rooms.mappers.RoomMapper;
+import com.example.vrc.rooms.mappers.SharedRoomMapper;
 import com.example.vrc.rooms.models.RoomEntity;
+import com.example.vrc.rooms.models.SharedRoomEntity;
 import com.example.vrc.rooms.repositories.RoomRepository;
 import com.example.vrc.rooms.services.RoomService;
+
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -33,6 +39,10 @@ public class RoomServiceImpl implements RoomService {
     private UserMapper userMapper;
     @Autowired
     private UserWithoutPasswordMapper userWithoutPasswordMapper;
+    @Autowired
+    private SharedRoomRepository sharedRoomRepository;
+    @Autowired
+    private SharedRoomMapper sharedRoomMapper;
 
     @Override
     public RoomDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
@@ -55,14 +65,24 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
-
+        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById(roomId);
+        String collaboratorEmailOptional = "";
         if (roomOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
 
+        if(!sharedRoomOptional.isEmpty()){
+            SharedRoomEntity sharedRoom = sharedRoomOptional.get();
+            collaboratorEmailOptional = sharedRoom.getCollaboratorEmail();
+        }
+
         RoomEntity roomEntity = roomOptional.get();
 
-        if (!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
+        boolean isOwner = roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail);
+        boolean isCollaborator = roomEntity.getUser().getEmail().equalsIgnoreCase(collaboratorEmailOptional);
+
+
+        if (!isOwner && !isCollaborator) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to update this room!");
         }
 
@@ -109,5 +129,29 @@ public class RoomServiceImpl implements RoomService {
     public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {
         Optional<RoomEntity> room = roomRepository.findById(roomId);
         return room.isPresent() && room.get().getUser().getEmail().equalsIgnoreCase(userEmail);
+    }
+
+    @Override
+    public RoomDTO addCollaborator(UUID roomID, String collaboratorEmail) {
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+        RoomEntity room = roomOptional.get();
+        UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
+
+        SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(
+                roomID,
+                collaboratorEmail
+
+        );
+        return this.roomMapper.toDto(this.roomRepository.save(room));
+    }
+
+    @Override
+    public List<SharedRoomDTO> getSharedRooms(String userEmail) {
+        List<SharedRoomEntity> rooms = sharedRoomRepository.findAllByCollaboratorEmailIgnoreCase(userEmail);
+
+        return this.sharedRoomMapper.toDtoList(rooms);
     }
 }

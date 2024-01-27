@@ -2,6 +2,7 @@ package com.example.vrc.rooms.services;
 
 import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
+import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,4 +17,8 @@ public interface RoomService {
     RoomDTO shareRoomById(UUID roomID);
 
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
+
+    RoomDTO addCollaborator(UUID roomID, String collaboratorEmail);
+
+    List<SharedRoomDTO> getSharedRooms(String userEmail);
 }
