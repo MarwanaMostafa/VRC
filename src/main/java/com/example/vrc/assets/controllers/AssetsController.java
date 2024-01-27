@@ -4,7 +4,6 @@ import com.example.vrc.assets.services.HdrisAssetsService;
 import com.example.vrc.assets.services.ModelsAssetsService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
