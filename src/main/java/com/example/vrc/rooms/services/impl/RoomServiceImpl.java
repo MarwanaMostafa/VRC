@@ -111,7 +111,7 @@ public class RoomServiceImpl implements RoomService {
 
         RoomEntity roomEntity = roomOptional.get();
 
-        if(!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail) && roomEntity.getIsPublic().equals(false)) {
+        if(!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to fetch this room!");
         }
 
