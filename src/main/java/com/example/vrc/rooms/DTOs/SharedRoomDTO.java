@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,13 +17,13 @@ public class SharedRoomDTO {
 
     @NotEmpty
     @Email
-    private String collaboratorEmail;
+    private List<String> collaboratorEmail;
 
     @NotEmpty
     private UUID id;
 
 
-    public SharedRoomDTO(UUID id,String collaboratorEmail){
+    public SharedRoomDTO(UUID id,List<String> collaboratorEmail){
         this.id=id;
         this.collaboratorEmail=collaboratorEmail;
     }
