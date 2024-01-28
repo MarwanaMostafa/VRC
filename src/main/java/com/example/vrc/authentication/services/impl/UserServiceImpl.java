@@ -1,16 +1,15 @@
 package com.example.vrc.authentication.services.impl;
 
 import com.example.vrc.authentication.DTOs.UserDTO;
+import com.example.vrc.authentication.mappers.UserMapper;
+import com.example.vrc.authentication.models.UserEntity;
+import com.example.vrc.authentication.repositories.UserRepository;
+import com.example.vrc.authentication.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.example.vrc.authentication.mappers.UserMapper;
-import com.example.vrc.authentication.models.UserEntity;
-import com.example.vrc.authentication.repositories.UserRepository;
-import com.example.vrc.authentication.services.UserService;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -40,12 +39,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
     }
-    @Override
-    public UserDTO getUserById(Long userId) {
-        Optional<UserEntity> userEntityOpt = this.userRepository.findById(userId);
-        return userEntityOpt.map(user -> this.userMapper.toDto(user)).orElse(null);
-    }
-
     @Override
     public UserDTO getUserByEmail(String userEmail) {
         Optional<UserEntity> userEntityOpt = this.userRepository.findByEmailIgnoreCase(userEmail);
