@@ -15,12 +15,16 @@ public class SharedRoomEntity {
     @Column(nullable = false)
     private String collaboratorEmail;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = RoomEntity.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity room;
 
     public String getCollaboratorEmail() {
         return collaboratorEmail;
+    }
+
+    public RoomEntity getRoom(){
+        return this.room;
     }
 
 
