@@ -1,5 +1,6 @@
 package com.example.vrc.authentication.services.impl;
 
+import com.example.vrc.authentication.DTOs.RUserCredentials;
 import com.example.vrc.authentication.DTOs.ResetPasswordData;
 import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.Exception.PasswordMismatchException;
@@ -17,7 +18,6 @@ import com.example.vrc.authentication.services.UserService;
 import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
 import com.example.vrc.authentication.mappers.UserMapper;
 import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
-import com.example.vrc.authentication.models.RUserCredentials;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -58,11 +58,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserWithoutPasswordDTO login(RUserCredentials userCredentials) throws ResponseStatusException {
-        UserDTO user = this.userService.getUserByEmail(userCredentials.email());
+        UserDTO user = this.userService.getUserByEmail(userCredentials.getEmail());
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with the entered email!");
         }
-        if (!UserPasswordEncryption.matchPasswords(userCredentials.password(), user.getPassword())) {
+        if (!UserPasswordEncryption.matchPasswords(userCredentials.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect Password!");
         }
 
