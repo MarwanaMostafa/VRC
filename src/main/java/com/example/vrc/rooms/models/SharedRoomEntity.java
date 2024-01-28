@@ -6,12 +6,15 @@ import lombok.Data;
 import java.util.List;
 import org.apache.catalina.User;
 
+import java.util.UUID;
+
 @Entity
 @Data
 public class SharedRoomEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
     @ElementCollection
     @CollectionTable(name = "shared_room_collaborators", joinColumns = @JoinColumn(name = "room_id"))
