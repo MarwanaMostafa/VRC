@@ -9,12 +9,15 @@ import org.springframework.stereotype.Component;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class PolyPizzaObjectsList implements ObjectsList {
     private List<String> names = new ArrayList<>();
     private List<String> ids = new ArrayList<>();
+    private Set<String> idSet = new HashSet<String>();
     public PolyPizzaObjectsList(){
         JSONParser jsonParser = new JSONParser();
         try(FileReader reader = new FileReader("polyPizzaObjects.json")){
@@ -37,8 +40,10 @@ public class PolyPizzaObjectsList implements ObjectsList {
         JSONArray models = jsonObj.getJSONArray("models");
         for(int i = 0 ; i < models.length() ; i++){
             JSONObject curObj = models.getJSONObject(i);
-            names.add(curObj.getString("name"));
-            ids.add(curObj.getString("id"));
+            if(!idSet.contains(curObj.getString("id"))){
+                names.add(curObj.getString("name"));
+                ids.add(curObj.getString("id"));
+            }
         }
     }
 

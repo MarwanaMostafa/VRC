@@ -7,10 +7,10 @@ import java.io.IOException;
 
 @Component
 public class PolyPizzaModelObject implements Object{
-    private String id;
-    private String name;
-    private String url;
-    private String thumbnailUrl;
+    private String id = "";
+    private String name = "";
+    private String url = "";
+    private String thumbnailUrl = "";
 
     @Override
     public void fetch() throws IOException, InterruptedException {

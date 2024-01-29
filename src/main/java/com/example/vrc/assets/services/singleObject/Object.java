@@ -8,4 +8,5 @@ public interface Object {
     String getName();
     String getUrl();
     String getThumbnailUrl();
+    String getId();
 }

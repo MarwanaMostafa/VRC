@@ -11,9 +11,10 @@ import java.net.http.HttpResponse;
 
 @Component
 public class PolyHavenHdriObject implements Object{
-    private String name;
-    private String url;
-    private String thumbnailUrl;
+    private String name =  "";
+    private String url = "";
+    private String thumbnailUrl = "";
+    private String id = "";
     public void fetch() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -34,6 +35,7 @@ public class PolyHavenHdriObject implements Object{
         String hdriUrl = lasthdri.getString("url");
         this.url = hdriUrl;
         this.thumbnailUrl = thumbnailUrl;
+        this.id = name;
     }
 
     public String getName(){
@@ -44,6 +46,9 @@ public class PolyHavenHdriObject implements Object{
     }
     public String getThumbnailUrl(){
         return thumbnailUrl;
+    }
+    public String getId() {
+        return id;
     }
     public void setName(String name){
         this.name = name;

@@ -11,9 +11,10 @@ import java.net.http.HttpResponse;
 
 @Component
 public class PolyHavenModelObject implements Object{
-    private String name;
-    private String url;
-    private String thumbnailUrl;
+    private String name = "";
+    private String url = "";
+    private String thumbnailUrl = "";
+    private String id = "";
     @Override
     public void fetch() throws IOException, InterruptedException {
 
@@ -38,6 +39,7 @@ public class PolyHavenModelObject implements Object{
                 .format("https://cdn.polyhaven.com/asset_img/thumbs/%s.png?format=jpeg" , name);
         this.url = gltfUrl;
         this.thumbnailUrl = thumbnailUrl;
+        this.id = name;
     }
 
     public String getName(){
@@ -49,6 +51,11 @@ public class PolyHavenModelObject implements Object{
     public String getThumbnailUrl(){
         return thumbnailUrl;
     }
+
+    public String getId() {
+        return id;
+    }
+
     public void setName(String name){
         this.name = name;
     }
