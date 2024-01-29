@@ -1,7 +1,7 @@
 package com.example.vrc.authentication.controllers;
 
+import com.example.vrc.authentication.DTOs.RUserCredentials;
 import com.example.vrc.authentication.DTOs.ResetPasswordData;
-import com.example.vrc.authentication.utilities.JwtUtil;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.services.AuthService;
 import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
-import com.example.vrc.authentication.models.RUserCredentials;
 import com.example.vrc.shared.utilities.UserInputsValidator;
 
 import static com.example.vrc.authentication.common.documentation.DocConstant.AuthenticationConstants.*;
@@ -37,8 +36,6 @@ import static com.example.vrc.authentication.common.documentation.DocConstant.Au
 public class AuthController {
     @Autowired
     private AuthService authService;
-
-
     @Operation(summary = API_POST_LOG_IN_VALUES, description = API_POST_LOG_IN_DESCRIPTION)
     @PostMapping("/login")
     @ApiResponses({
