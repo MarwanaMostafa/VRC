@@ -169,9 +169,9 @@ public class RoomServiceImpl implements RoomService {
         //Add collaborator to the List
         collaboratorEmails.add(collaboratorEmail);
         SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(
-                roomID,
-                collaboratorEmails
-        );
+                collaboratorEmails,
+                roomID
+                );
 
         SharedRoomEntity sharedRoom = this.sharedRoomRepository.save(this.sharedRoomMapper.toEntity(sharedRoomDTO));
         return this.roomMapper.toDto(this.roomRepository.save(room));
