@@ -1,7 +1,8 @@
 package com.example.vrc.rooms.models;
 
 import jakarta.persistence.*;
-import java.util.UUID;
+
+import java.util.*;
 
 import com.example.vrc.authentication.models.UserEntity;
 import lombok.AllArgsConstructor;
@@ -34,4 +35,7 @@ public class RoomEntity {
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<SharedRoomEntity> sharedRooms = new ArrayList<>();
 }

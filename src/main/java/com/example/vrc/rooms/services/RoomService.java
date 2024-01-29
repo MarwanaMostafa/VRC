@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface RoomService {
-    RoomDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
+    RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
     RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
 
     List<RoomDTO> getRooms(String userEmail);

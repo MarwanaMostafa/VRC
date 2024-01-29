@@ -46,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
     private SharedRoomMapper sharedRoomMapper;
 
     @Override
-    public RoomDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
+    public RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
         UserDTO userDTO = userService.getUserByEmail(userEmail);
 
         RoomDTO roomDTO = new RoomDTO(
@@ -60,7 +60,7 @@ public class RoomServiceImpl implements RoomService {
 
         RoomEntity room = this.roomRepository.save(this.roomMapper.toEntity(roomDTO));
 
-        return this.roomMapper.toDto(room);
+        return this.roomMapper.toRoomWithoutUserDto(room);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class RoomServiceImpl implements RoomService {
 
         if(!sharedRoomOptional.isEmpty()){
             SharedRoomEntity sharedRoom = sharedRoomOptional.get();
-            collaboratorEmailOptional = sharedRoom.getCollaboratorEmail();
+//            collaboratorEmailOptional = sharedRoom.getCollaborator();
         }
 
         RoomEntity roomEntity = roomOptional.get();
@@ -157,7 +157,7 @@ public class RoomServiceImpl implements RoomService {
         List<String>collaboratorEmails = new ArrayList<>();
         if(!sharedRoomOptional.isEmpty()){
             SharedRoomEntity sharedRoom = sharedRoomOptional.get();
-            collaboratorEmails = sharedRoom.getCollaboratorEmail();
+//            collaboratorEmails = sharedRoom.getCollaboratorEmail();
         }
         else{
             for(String collaborator: collaboratorEmails){
@@ -217,15 +217,15 @@ public class RoomServiceImpl implements RoomService {
 
         Optional<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findById(roomID);
 
-        if (!sharedRoomsOptional.isEmpty()) {
-            SharedRoomEntity sharedRoom = sharedRoomsOptional.get();
-            //get collaboratorDTO
-            List<String> collaboratorEmails = sharedRoom.getCollaboratorEmail();
-            for(String collaboratorEmail:collaboratorEmails) {
-                UserDTO collaboratorDTO = userService.getUserByEmail(collaboratorEmail);
-                collaborators.add(collaboratorDTO);
-            }
-        }
+//        if (!sharedRoomsOptional.isEmpty()) {
+//            SharedRoomEntity sharedRoom = sharedRoomsOptional.get();
+//            //get collaboratorDTO
+////            List<String> collaboratorEmails = sharedRoom.getCollaboratorEmail();
+////            for(String collaboratorEmail:collaboratorEmails) {
+////                UserDTO collaboratorDTO = userService.getUserByEmail(collaboratorEmail);
+////                collaborators.add(collaboratorDTO);
+//            }
+//        }
         return collaborators;
     }
 }
