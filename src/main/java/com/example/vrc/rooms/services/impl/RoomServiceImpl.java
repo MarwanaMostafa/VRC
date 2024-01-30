@@ -153,7 +153,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDTO> getRooms(String userEmail) {
+    public List<RoomWithoutUserDTO> getRooms(String userEmail) {
         List<RoomEntity> rooms = roomRepository.findAllByUserEmailIgnoreCase(userEmail);
 
         return this.roomMapper.toDtoList(rooms);
@@ -198,7 +198,7 @@ public class RoomServiceImpl implements RoomService {
         List<RoomDTO> allRooms = new ArrayList<>();
 
         // Map user rooms to DTOs
-        allRooms.addAll(roomMapper.toDtoList(rooms));
+//        allRooms.addAll(roomMapper.toDtoList(rooms));
 
         // Map shared rooms to DTOs
 //        for (SharedRoomEntity sharedRoom : sharedRooms) {

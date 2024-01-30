@@ -14,7 +14,7 @@ public interface RoomMapper {
     RoomDTO toDto(RoomEntity roomEntity);
     RoomWithoutUserDTO toRoomWithoutUserDto(RoomEntity roomEntity);
 
-    List<RoomDTO> toDtoList(List<RoomEntity> rooms);
+    List<RoomWithoutUserDTO> toDtoList(List<RoomEntity> rooms);
 
     List<RoomEntity> toEntities(List<RoomDTO> rooms);
 }

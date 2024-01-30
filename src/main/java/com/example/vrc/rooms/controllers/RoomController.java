@@ -75,6 +75,19 @@ public class RoomController {
         return new ResponseEntity<>(this.roomService.shareRoomById(roomID), HttpStatus.OK);
     }
 
+    @Operation(summary = API_GET_ROOMS_VALUES, description = API_GET_ROOMS_DESCRIPTION)
+    @GetMapping("/get-rooms")
+    @ApiFullResponseGetRooms
+    ResponseEntity<List<RoomWithoutUserDTO>> getRooms(Authentication auth) throws ResponseStatusException {
+        String userEmail = auth.getName();
+        return new ResponseEntity<>(this.roomService.getRooms(userEmail), HttpStatus.OK);
+    }
+
+
+
+
+
+
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
 
@@ -105,17 +118,7 @@ public class RoomController {
 
 
     //Why return the Room ID? Because if a user needs to update a specific room, they need to know the Room ID
-    @Operation(summary = API_GET_ROOMS_VALUES, description = API_GET_ROOMS_DESCRIPTION)
-    @GetMapping("/get-rooms")
-    @ApiFullResponseGetRooms
-    ResponseEntity<List<RoomWithoutUserDTO>> getRooms(Authentication auth) throws ResponseStatusException {
-        String userEmail = auth.getName();
 
-        List<RoomDTO> rooms = this.roomService.getRooms(userEmail);
-        List<RoomWithoutUserDTO> roomWithoutUserDTOS = this.roomWithoutUserMapper.toDtoList(this.roomMapper.toEntities(rooms));
-
-        return new ResponseEntity<>(roomWithoutUserDTOS, HttpStatus.OK);
-    }
 
 
     @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
@@ -133,8 +136,7 @@ public class RoomController {
 
 
     void sendRoomData(String userEmail) {
-        List<RoomDTO> rooms = roomService.getRooms(userEmail);
-        List<RoomWithoutUserDTO> roomWithoutUserDTOS = roomWithoutUserMapper.toDtoList(roomMapper.toEntities(rooms));
+        List<RoomWithoutUserDTO> roomWithoutUserDTOS =  roomService.getRooms(userEmail);
         messagingTemplate.convertAndSend("/topic/rooms/" + userEmail, roomWithoutUserDTOS);
     }
 
