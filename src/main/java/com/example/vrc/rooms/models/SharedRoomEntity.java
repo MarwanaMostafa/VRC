@@ -2,26 +2,26 @@ package com.example.vrc.rooms.models;
 
 import com.example.vrc.authentication.models.UserEntity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
+
 import java.util.UUID;
 
 @Entity
 @Table(name = "shared_rooms")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SharedRoomEntity {
+
+
+    @Column(name = "collaborator")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private UUID id;
+    private String collaborator;
 
-    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "collaborator_id", nullable = false)
-    private UserEntity collaborator;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_id")
 
-    @Getter
-    @ManyToOne(targetEntity = RoomEntity.class, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity room;
 
 }

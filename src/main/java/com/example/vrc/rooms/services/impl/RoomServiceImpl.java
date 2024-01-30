@@ -1,9 +1,20 @@
 package com.example.vrc.rooms.services.impl;
 
+import com.example.vrc.authentication.DTOs.UserDTO;
+import com.example.vrc.authentication.mappers.UserMapper;
+import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
+import com.example.vrc.authentication.services.UserService;
+import com.example.vrc.rooms.DTOs.RoomDTO;
+import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
+import com.example.vrc.rooms.DTOs.SharedRoomDTO;
+import com.example.vrc.rooms.mappers.RoomMapper;
+import com.example.vrc.rooms.mappers.SharedRoomMapper;
+import com.example.vrc.rooms.models.RoomEntity;
+import com.example.vrc.rooms.models.SharedRoomEntity;
+import com.example.vrc.rooms.repositories.RoomRepository;
 import com.example.vrc.rooms.repositories.SharedRoomRepository;
-import org.apache.catalina.User;
+import com.example.vrc.rooms.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.support.NullValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,20 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.example.vrc.authentication.DTOs.UserDTO;
-import com.example.vrc.authentication.mappers.UserMapper;
-import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
-import com.example.vrc.authentication.services.UserService;
-import com.example.vrc.rooms.DTOs.RoomDTO;
-import com.example.vrc.rooms.DTOs.SharedRoomDTO;
-import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
-import com.example.vrc.rooms.mappers.RoomMapper;
-import com.example.vrc.rooms.mappers.SharedRoomMapper;
-import com.example.vrc.rooms.models.RoomEntity;
-import com.example.vrc.rooms.models.SharedRoomEntity;
-import com.example.vrc.rooms.repositories.RoomRepository;
-import com.example.vrc.rooms.services.RoomService;
 
 
 @Service
@@ -59,14 +56,56 @@ public class RoomServiceImpl implements RoomService {
         );
 
         RoomEntity room = this.roomRepository.save(this.roomMapper.toEntity(roomDTO));
-
         return this.roomMapper.toRoomWithoutUserDto(room);
     }
 
     @Override
+    public String addCollaborator(String roomID, String collaboratorEmail) {
+        UUID ID =convertToUUID(roomID);
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(ID);
+        UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
+
+        //Check if this room exist
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+
+        //Check if that user exist
+        if (userDTO == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with the entered email!");
+        }
+
+        RoomEntity room = roomOptional.get();
+
+        //Check if this room is Shared with this collaborator or no
+        for (SharedRoomEntity SharedRoom : room.getSharedRooms()) {
+            if (SharedRoom.getCollaborator().equals(collaboratorEmail))
+                return "This user already added in this room before";
+        }
+
+        SharedRoomEntity sharedRoom = new SharedRoomEntity(collaboratorEmail,room);
+        room.addCollaborator(sharedRoom);
+
+        //save in DB
+        this.roomRepository.save(room);
+
+        return "User added to the room successfully";
+    }
+
+    public UUID convertToUUID(String ID)
+    {
+        try {
+            return UUID.fromString(ID);
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+
+    }
+    @Override
     public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
-        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById(roomId);
+        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById("roomId");
         List<String> collaboratorEmailOptional = new ArrayList<>();
         if (roomOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
@@ -138,65 +177,28 @@ public class RoomServiceImpl implements RoomService {
         return room.isPresent() && room.get().getUser().getEmail().equalsIgnoreCase(userEmail);
     }
 
-    @Override
-    public RoomDTO addCollaborator(UUID roomID, String collaboratorEmail) {
-        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
-        UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
-        //Check if this room exist
-        if (roomOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
-        }
-        //Check if that user exist
-        if(userDTO == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with the entered email!");
-        }
-        RoomEntity room = roomOptional.get();
-
-        //Check if this room is Shared
-        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById(roomID);
-        List<String>collaboratorEmails = new ArrayList<>();
-        if(!sharedRoomOptional.isEmpty()){
-            SharedRoomEntity sharedRoom = sharedRoomOptional.get();
-//            collaboratorEmails = sharedRoom.getCollaboratorEmail();
-        }
-        else{
-            for(String collaborator: collaboratorEmails){
-                if(collaborator.equalsIgnoreCase(collaboratorEmail)){
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "This User already exist!");
-                }
-            }
-        }
-        //Add collaborator to the List
-        collaboratorEmails.add(collaboratorEmail);
-        SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(
-                collaboratorEmails,
-                roomID
-                );
-
-        SharedRoomEntity sharedRoom = this.sharedRoomRepository.save(this.sharedRoomMapper.toEntity(sharedRoomDTO));
-        return this.roomMapper.toDto(this.roomRepository.save(room));
-    }
 
     @Override
     public List<SharedRoomDTO> getSharedRooms(String userEmail) {
-        List<SharedRoomEntity> rooms = sharedRoomRepository.findAllByCollaboratorEmailIgnoreCase(userEmail);
+//        List<SharedRoomEntity> rooms = sharedRoomRepository.findAllByCollaboratorEmailIgnoreCase(userEmail);
 
-        return this.sharedRoomMapper.toDtoList(rooms);
+//        return this.sharedRoomMapper.toDtoList(rooms);
+        return null;
     }
 
     @Override
     public List<RoomDTO> getAllRooms(String userEmail) {
         List<RoomEntity> rooms = roomRepository.findAllByUserEmailIgnoreCase(userEmail);
-        List<SharedRoomEntity> sharedRooms = sharedRoomRepository.findAllByCollaboratorEmailIgnoreCase(userEmail);
+//        List<SharedRoomEntity> sharedRooms = sharedRoomRepository.findAllByCollaboratorEmailIgnoreCase(userEmail);
         List<RoomDTO> allRooms = new ArrayList<>();
 
         // Map user rooms to DTOs
         allRooms.addAll(roomMapper.toDtoList(rooms));
 
         // Map shared rooms to DTOs
-        for (SharedRoomEntity sharedRoom : sharedRooms) {
-            allRooms.add(roomMapper.toDto(sharedRoom.getRoom()));
-        }
+//        for (SharedRoomEntity sharedRoom : sharedRooms) {
+//            allRooms.add(roomMapper.toDto(sharedRoom.getRoom()));
+//        }
 
         return allRooms;
     }
@@ -215,7 +217,7 @@ public class RoomServiceImpl implements RoomService {
         List<UserDTO> collaborators = new ArrayList<>();
         collaborators.add(ownerDTO);
 
-        Optional<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findById(roomID);
+        Optional<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findById("roomID");
 
 //        if (!sharedRoomsOptional.isEmpty()) {
 //            SharedRoomEntity sharedRoom = sharedRoomsOptional.get();

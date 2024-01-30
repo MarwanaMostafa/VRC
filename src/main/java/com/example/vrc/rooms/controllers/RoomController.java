@@ -1,7 +1,7 @@
 package com.example.vrc.rooms.controllers;
 
-import com.example.vrc.rooms.DTOs.RoomIDDTO;
-import com.example.vrc.rooms.DTOs.SharedRoomDTO;
+import com.example.vrc.rooms.DTOs.*;
+import com.example.vrc.rooms.models.RoomEntity;
 import com.example.vrc.rooms.swagger.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.example.vrc.rooms.services.RoomService;
-import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
-import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.mappers.RoomMapper;
 import com.example.vrc.rooms.mappers.RoomWithoutUserMapper;
 import com.example.vrc.shared.utilities.UserInputsValidator;
@@ -62,8 +60,6 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.CREATED);
     }
 
-// TODO: Add a new endpoint to add a collaborator for a specific room. Use the sharedRoom parameter, as shown in the example endpoint below.
-
     @Operation(summary = API_POST_ADD_COLLABORATOR_VALUES, description = API_POST_ADD_COLLABORATOR_DESCRIPTION)
     @PostMapping("/add-collaborator")
     @ApiFullResponseAddCollaborator
@@ -72,13 +68,8 @@ public class RoomController {
 
         String userEmail = auth.getName();
 
-
-        // Call a service method to add collaborator
-        roomService.addCollaborator(sharedRoom.getId(), userEmail);
-
         // Optionally, you can return some message indicating success
-        return new ResponseEntity<>("Collaborator added successfully", HttpStatus.OK);
-
+        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom.getId(), sharedRoom.getCollaboratorEmail()), HttpStatus.OK);
     }
 
 
