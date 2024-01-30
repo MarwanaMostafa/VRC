@@ -68,6 +68,12 @@ public class RoomController {
         return new ResponseEntity<>(roomService.addCollaborator(sharedRoom), HttpStatus.OK);
     }
 
+    @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
+    @GetMapping("/publicRoom/{roomID}")
+    @ApiFullResponseGetSharedRoom
+    ResponseEntity<RoomWithoutUserDTO> sharedRoom(@PathVariable String roomID) throws ResponseStatusException {
+        return new ResponseEntity<>(this.roomService.shareRoomById(roomID), HttpStatus.OK);
+    }
 
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
@@ -125,17 +131,7 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
-    @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
-    @GetMapping("/shared-room")
-    @ApiFullResponseGetSharedRoom
-    ResponseEntity<RoomWithoutUserDTO> sharedRoom(@RequestBody RoomIDDTO roomID) throws ResponseStatusException {
 
-        RoomDTO room = this.roomService.shareRoomById(roomID.getRoomID());
-
-        RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
-
-        return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
-    }
     void sendRoomData(String userEmail) {
         List<RoomDTO> rooms = roomService.getRooms(userEmail);
         List<RoomWithoutUserDTO> roomWithoutUserDTOS = roomWithoutUserMapper.toDtoList(roomMapper.toEntities(rooms));

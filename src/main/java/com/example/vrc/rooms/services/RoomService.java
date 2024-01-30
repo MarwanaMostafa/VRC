@@ -11,13 +11,13 @@ import java.util.UUID;
 public interface RoomService {
     RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
     String addCollaborator(SharedRoomDTO sharedRoom);
+    RoomWithoutUserDTO shareRoomById(String roomID);
 
 
     RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
 
     List<RoomDTO> getRooms(String userEmail);
     RoomDTO getRoomByID(UUID roomID, String userEmail);
-    RoomDTO shareRoomById(UUID roomID);
 
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
 

@@ -89,10 +89,20 @@ public class RoomServiceImpl implements RoomService {
         room.addCollaborator(sharedRoom);
 
         //save in DB
-//        this.roomRepository.save(room);
         this.sharedRoomRepository.save(sharedRoom);
         return "User added to the room successfully";
     }
+
+    @Override
+    public RoomWithoutUserDTO shareRoomById(String ID) {
+        UUID roomID=convertToUUID(ID);
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
+        if (roomOptional.isEmpty() ||!roomOptional.get().getIsPublic()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+        return this.roomMapper.toRoomWithoutUserDto(roomOptional.get());
+    }
+
 
     public UUID convertToUUID(String ID)
     {
@@ -165,14 +175,7 @@ public class RoomServiceImpl implements RoomService {
 
         return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
-    @Override
-    public RoomDTO shareRoomById(UUID roomID) {
-        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
-        if (roomOptional.isEmpty() ||!roomOptional.get().getIsPublic()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
-        }
-        return this.roomMapper.toDto(roomOptional.get());
-    }
+
 
     public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {
         Optional<RoomEntity> room = roomRepository.findById(roomId);
