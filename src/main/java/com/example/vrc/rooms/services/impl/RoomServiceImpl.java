@@ -8,7 +8,6 @@ import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
 import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 import com.example.vrc.rooms.mappers.RoomMapper;
-import com.example.vrc.rooms.mappers.SharedRoomMapper;
 import com.example.vrc.rooms.models.RoomEntity;
 import com.example.vrc.rooms.models.SharedRoomEntity;
 import com.example.vrc.rooms.repositories.RoomRepository;
@@ -40,13 +39,11 @@ public class RoomServiceImpl implements RoomService {
     private UserWithoutPasswordMapper userWithoutPasswordMapper;
     @Autowired
     private SharedRoomRepository sharedRoomRepository;
-    @Autowired
-    private SharedRoomMapper sharedRoomMapper;
 
     @Override
     public RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
         UserDTO userDTO = userService.getUserByEmail(userEmail);
-
+        log.info("Fetching user who needs to create a room");
         RoomDTO roomDTO = new RoomDTO(
                 null,
                 roomInfo.getTitle(),
@@ -56,7 +53,11 @@ public class RoomServiceImpl implements RoomService {
                 this.userWithoutPasswordMapper.toDto(this.userMapper.toEntity(userDTO))
         );
 
+        log.info("Creating Room DTO with the following fields: {}", roomDTO.toString());
+
         RoomEntity room = this.roomRepository.save(this.roomMapper.toEntity(roomDTO));
+
+        log.info("Create Room Success ");
         return this.roomMapper.toRoomWithoutUserDto(room);
     }
 
@@ -65,8 +66,13 @@ public class RoomServiceImpl implements RoomService {
 
         String collaboratorEmail=sharedRoomDTO.getCollaboratorEmail();
         UUID ID =convertToUUID(sharedRoomDTO.getId());
+        log.info("Collaborate Email is {} and UUID is {}",collaboratorEmail,ID);
+
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(ID);
+        log.info("Check If Room ID is Exist {}", roomOptional.isPresent());
+
         UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
+        log.info("We Get User DTO To Check If this Collaborator email exist or not");
 
         //Check if this room exist
         if (roomOptional.isEmpty()) {
@@ -80,6 +86,7 @@ public class RoomServiceImpl implements RoomService {
 
         RoomEntity room = roomOptional.get();
 
+        log.info("Check List Collaborators For Room ID to know if user already added or not ");
         //Check if this room is Shared with this collaborator or no
         for (SharedRoomEntity SharedRoom : room.getSharedRooms()) {
             if (SharedRoom.getCollaborator().equals(collaboratorEmail))
@@ -97,10 +104,14 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomWithoutUserDTO shareRoomById(String ID) {
         UUID roomID=convertToUUID(ID);
+        log.info("User Enter Right Room ID {}",roomID);
+
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
         if (roomOptional.isEmpty() ||!roomOptional.get().getIsPublic()) {
+            log.info("This ID isn't exist in DB or Is Not Public {}",roomID);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
+
         return this.roomMapper.toRoomWithoutUserDto(roomOptional.get());
     }
 
@@ -114,7 +125,7 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomWithoutUserDTO> getSharedRooms(String userEmail) {
         List<SharedRoomEntity> rooms = sharedRoomRepository.findAllByCollaboratorIgnoreCase(userEmail);
         List<RoomEntity>roomEntities=new ArrayList<>();
-
+        log.info("User {} is collaborating on {} shared rooms", userEmail, rooms.size());
         for(SharedRoomEntity sharedRoom: rooms)
             roomEntities.add(sharedRoom.getRoom());
 

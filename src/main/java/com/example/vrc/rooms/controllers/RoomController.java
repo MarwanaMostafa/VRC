@@ -1,10 +1,7 @@
 package com.example.vrc.rooms.controllers;
 
-import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
 import com.example.vrc.rooms.DTOs.SharedRoomDTO;
-import com.example.vrc.rooms.mappers.RoomMapper;
-import com.example.vrc.rooms.mappers.RoomWithoutUserMapper;
 import com.example.vrc.rooms.services.RoomService;
 import com.example.vrc.rooms.swagger.*;
 import com.example.vrc.shared.utilities.UserInputsValidator;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
-
 import static com.example.vrc.rooms.common.documentation.DocConstant.RoomConstants.*;
 
 @Tag(name = API_NAME,description = API_DESCRIPTION)
@@ -34,10 +29,6 @@ import static com.example.vrc.rooms.common.documentation.DocConstant.RoomConstan
 public class RoomController {
     @Autowired
     private RoomService roomService;
-    @Autowired
-    private RoomMapper roomMapper;
-    @Autowired
-    private RoomWithoutUserMapper roomWithoutUserMapper;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
