@@ -14,9 +14,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SharedRoomEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "collaborator")
-    @Id
     private String collaborator;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -24,4 +26,8 @@ public class SharedRoomEntity {
 
     private RoomEntity room;
 
+    public SharedRoomEntity(String collaboratorEmail, RoomEntity room) {
+        this.collaborator=collaboratorEmail;
+        this.room=room;
+    }
 }

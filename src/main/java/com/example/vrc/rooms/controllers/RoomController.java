@@ -68,8 +68,7 @@ public class RoomController {
 
         String userEmail = auth.getName();
 
-        // Optionally, you can return some message indicating success
-        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom.getId(), sharedRoom.getCollaboratorEmail()), HttpStatus.OK);
+        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom), HttpStatus.OK);
     }
 
 

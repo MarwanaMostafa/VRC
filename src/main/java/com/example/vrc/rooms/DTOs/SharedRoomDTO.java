@@ -17,6 +17,6 @@ public class SharedRoomDTO {
     @NotEmpty
     @Email
     private String collaboratorEmail;
-
+    @NotEmpty
     private String id;
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface RoomService {
     RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
-    String addCollaborator(String roomID, String collaboratorEmail);
+    String addCollaborator(SharedRoomDTO sharedRoom);
 
 
     RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);

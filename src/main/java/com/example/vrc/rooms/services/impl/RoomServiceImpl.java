@@ -60,8 +60,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public String addCollaborator(String roomID, String collaboratorEmail) {
-        UUID ID =convertToUUID(roomID);
+    public String addCollaborator(SharedRoomDTO sharedRoomDTO) {
+
+        String collaboratorEmail=sharedRoomDTO.getCollaboratorEmail();
+        UUID ID =convertToUUID(sharedRoomDTO.getId());
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(ID);
         UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
 
@@ -87,8 +89,8 @@ public class RoomServiceImpl implements RoomService {
         room.addCollaborator(sharedRoom);
 
         //save in DB
-        this.roomRepository.save(room);
-
+//        this.roomRepository.save(room);
+        this.sharedRoomRepository.save(sharedRoom);
         return "User added to the room successfully";
     }
 
@@ -105,7 +107,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
         Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
-        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById("roomId");
+        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById(0L);
         List<String> collaboratorEmailOptional = new ArrayList<>();
         if (roomOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
@@ -217,7 +219,7 @@ public class RoomServiceImpl implements RoomService {
         List<UserDTO> collaborators = new ArrayList<>();
         collaborators.add(ownerDTO);
 
-        Optional<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findById("roomID");
+        Optional<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findById(0L);
 
 //        if (!sharedRoomsOptional.isEmpty()) {
 //            SharedRoomEntity sharedRoom = sharedRoomsOptional.get();
