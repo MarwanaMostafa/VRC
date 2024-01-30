@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface SharedRoomRepository extends JpaRepository<SharedRoomEntity, Long> {
-    SharedRoomEntity findAllByCollaboratorIgnoreCase(String userEmail);
+    List<SharedRoomEntity> findAllByCollaboratorIgnoreCase(String userEmail);
 }

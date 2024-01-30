@@ -103,7 +103,22 @@ public class RoomServiceImpl implements RoomService {
         return this.roomMapper.toRoomWithoutUserDto(roomOptional.get());
     }
 
+    @Override
+    public List<RoomWithoutUserDTO> getRooms(String userEmail) {
+        List<RoomEntity> rooms = roomRepository.findAllByUserEmailIgnoreCase(userEmail);
+        return this.roomMapper.toDtoList(rooms);
+    }
 
+    @Override
+    public List<RoomWithoutUserDTO> getSharedRooms(String userEmail) {
+        List<SharedRoomEntity> rooms = sharedRoomRepository.findAllByCollaboratorIgnoreCase(userEmail);
+        List<RoomEntity>roomEntities=new ArrayList<>();
+
+        for(SharedRoomEntity sharedRoom: rooms)
+            roomEntities.add(sharedRoom.getRoom());
+
+        return this.roomMapper.toDtoList(roomEntities);
+    }
     public UUID convertToUUID(String ID)
     {
         try {
@@ -152,12 +167,6 @@ public class RoomServiceImpl implements RoomService {
         return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
 
-    @Override
-    public List<RoomWithoutUserDTO> getRooms(String userEmail) {
-        List<RoomEntity> rooms = roomRepository.findAllByUserEmailIgnoreCase(userEmail);
-
-        return this.roomMapper.toDtoList(rooms);
-    }
 
     @Override
     public RoomDTO getRoomByID(UUID roomID, String userEmail) {
@@ -180,15 +189,6 @@ public class RoomServiceImpl implements RoomService {
     public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {
         Optional<RoomEntity> room = roomRepository.findById(roomId);
         return room.isPresent() && room.get().getUser().getEmail().equalsIgnoreCase(userEmail);
-    }
-
-
-    @Override
-    public List<SharedRoomDTO> getSharedRooms(String userEmail) {
-//        List<SharedRoomEntity> rooms = sharedRoomRepository.findAllByCollaboratorEmailIgnoreCase(userEmail);
-
-//        return this.sharedRoomMapper.toDtoList(rooms);
-        return null;
     }
 
     @Override

@@ -83,8 +83,13 @@ public class RoomController {
         return new ResponseEntity<>(this.roomService.getRooms(userEmail), HttpStatus.OK);
     }
 
-
-
+    @Operation(summary = API_GET_SHARED_ROOMS_VALUES, description = API_GET_SHARED_ROOMS_DESCRIPTION)
+    @GetMapping("/get-shared-rooms")
+    @ApiFullResponseGetSharedRooms
+    ResponseEntity<List<RoomWithoutUserDTO>> getSharedRooms(Authentication auth) throws ResponseStatusException {
+        String userEmail = auth.getName();
+        return new ResponseEntity<>(this.roomService.getSharedRooms(userEmail), HttpStatus.OK);
+    }
 
 
 
@@ -102,21 +107,6 @@ public class RoomController {
         sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
-
-    // TODO: Add a new endpoint to Get all Shared Rooms . as shown in the example endpoint below.
-    @Operation(summary = API_GET_SHARED_ROOMS_VALUES, description = API_GET_SHARED_ROOMS_DESCRIPTION)
-    @GetMapping("/get-shared-rooms")
-    @ApiFullResponseGetSharedRooms
-    ResponseEntity<List<SharedRoomDTO>> getSharedRooms(Authentication auth) throws ResponseStatusException {
-        String userEmail = auth.getName();
-
-        List<SharedRoomDTO> sharedRoomDTOS = this.roomService.getSharedRooms(userEmail);
-
-
-        return new ResponseEntity<>(sharedRoomDTOS, HttpStatus.OK);
-    }
-
-
     //Why return the Room ID? Because if a user needs to update a specific room, they need to know the Room ID
 
 
@@ -134,11 +124,9 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
-
     void sendRoomData(String userEmail) {
         List<RoomWithoutUserDTO> roomWithoutUserDTOS =  roomService.getRooms(userEmail);
         messagingTemplate.convertAndSend("/topic/rooms/" + userEmail, roomWithoutUserDTOS);
     }
-
 
 }

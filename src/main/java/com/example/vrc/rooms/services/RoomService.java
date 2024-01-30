@@ -13,6 +13,7 @@ public interface RoomService {
     String addCollaborator(SharedRoomDTO sharedRoom);
     RoomWithoutUserDTO shareRoomById(String roomID);
     List<RoomWithoutUserDTO> getRooms(String userEmail);
+    List<RoomWithoutUserDTO> getSharedRooms(String userEmail);
 
 
     RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
@@ -22,7 +23,6 @@ public interface RoomService {
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
 
 
-    List<SharedRoomDTO> getSharedRooms(String userEmail);
 
     List<UserDTO>getAllCollaborator(UUID roomID);
 
