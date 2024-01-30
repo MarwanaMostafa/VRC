@@ -14,6 +14,7 @@ import com.example.vrc.rooms.models.SharedRoomEntity;
 import com.example.vrc.rooms.repositories.RoomRepository;
 import com.example.vrc.rooms.repositories.SharedRoomRepository;
 import com.example.vrc.rooms.services.RoomService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@Slf4j
 @Service
 public class RoomServiceImpl implements RoomService {
     @Autowired
@@ -119,6 +120,30 @@ public class RoomServiceImpl implements RoomService {
 
         return this.roomMapper.toDtoList(roomEntities);
     }
+
+    @Override
+    public RoomWithoutUserDTO getRoomByID(String ID, String userEmail) {
+        UUID roomID=convertToUUID(ID);
+        log.info("Room ID is in right format " + roomID);
+
+        Optional<RoomEntity> roomOptional = Optional.ofNullable(this.roomRepository.findByUserEmailAndId(userEmail, roomID));
+        log.info("Room Option is null ? " + roomOptional.isEmpty());
+
+        Optional<SharedRoomEntity>sharedRoomEntityOptional= Optional.ofNullable(this.sharedRoomRepository.findByRoom_IdAndAndCollaboratorIgnoreCase(roomID, userEmail));
+        log.info("SharedRoomEntity Option is null ? " + sharedRoomEntityOptional.isEmpty());
+
+        if (roomOptional.isEmpty() && sharedRoomEntityOptional.isEmpty()) {
+            log.info("There is not room for user and this user not Collaborate for this room " + roomID);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
+        }
+
+        if(roomOptional.isEmpty())
+            return this.roomMapper.toRoomWithoutUserDto(sharedRoomEntityOptional.get().getRoom());
+
+        log.info("sharedRoomEntityOptional is already Null");
+        return this.roomMapper.toRoomWithoutUserDto(roomOptional.get());
+    }
+
     public UUID convertToUUID(String ID)
     {
         try {
@@ -168,22 +193,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
 
-    @Override
-    public RoomDTO getRoomByID(UUID roomID, String userEmail) {
-        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomID);
 
-        if (roomOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
-        }
-
-        RoomEntity roomEntity = roomOptional.get();
-
-        if(!roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to fetch this room!");
-        }
-
-        return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
-    }
 
 
     public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {

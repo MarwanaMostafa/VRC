@@ -14,15 +14,12 @@ public interface RoomService {
     RoomWithoutUserDTO shareRoomById(String roomID);
     List<RoomWithoutUserDTO> getRooms(String userEmail);
     List<RoomWithoutUserDTO> getSharedRooms(String userEmail);
+    RoomWithoutUserDTO getRoomByID(String roomID, String userEmail);
 
 
     RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
 
-    RoomDTO getRoomByID(UUID roomID, String userEmail);
-
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
-
-
 
     List<UserDTO>getAllCollaborator(UUID roomID);
 
