@@ -95,25 +95,17 @@ public class RoomController {
         return new ResponseEntity<>(this.roomService.getSharedRooms(userEmail), HttpStatus.OK);
     }
 
-
-
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
-
     @ApiFullResponseGetRoomByID
     ResponseEntity<RoomWithoutUserDTO> updateRoom(Authentication auth, @PathVariable UUID roomId, @Valid @RequestBody RoomWithoutUserDTO roomDTO, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
-
         String userEmail = auth.getName();
 
-        RoomDTO room = this.roomService.updateRoom(roomId, roomDTO, userEmail);
-        RoomWithoutUserDTO roomWithoutUserDTO = this.roomWithoutUserMapper.toDto(this.roomMapper.toEntity(room));
+        RoomWithoutUserDTO roomWithoutUserDTO = this.roomService.updateRoom(roomId, roomDTO, userEmail);
         sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
-    //Why return the Room ID? Because if a user needs to update a specific room, they need to know the Room ID
-
-
     void sendRoomData(String userEmail) {
         List<RoomWithoutUserDTO> roomWithoutUserDTOS =  roomService.getRooms(userEmail);
         messagingTemplate.convertAndSend("/topic/rooms/" + userEmail, roomWithoutUserDTOS);

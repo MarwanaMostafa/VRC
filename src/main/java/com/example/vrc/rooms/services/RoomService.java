@@ -15,9 +15,8 @@ public interface RoomService {
     List<RoomWithoutUserDTO> getRooms(String userEmail);
     List<RoomWithoutUserDTO> getSharedRooms(String userEmail);
     RoomWithoutUserDTO getRoomByID(String roomID, String userEmail);
+    RoomWithoutUserDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
 
-
-    RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
 
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
 

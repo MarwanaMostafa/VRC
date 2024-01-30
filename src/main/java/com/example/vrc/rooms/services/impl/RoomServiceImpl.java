@@ -123,6 +123,30 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomWithoutUserDTO getRoomByID(String ID, String userEmail) {
+        RoomEntity roomEntity=getRoomEntityByID(ID,userEmail);
+        return this.roomMapper.toRoomWithoutUserDto(roomEntity);
+    }
+
+    @Override
+    public RoomWithoutUserDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
+        log.info("Start Updating");
+        RoomEntity roomEntity=getRoomEntityByID(String.valueOf(roomId),userEmail);
+        log.info("User enter valid Room ID : "+roomId);
+
+        log.info("User Logged In IS : "+roomEntity.getUser().getEmail());
+        roomEntity.setDescription(roomInfo.getDescription());
+        roomEntity.setState(roomInfo.getState());
+        roomEntity.setIsPublic(roomInfo.getIsPublic());
+        roomEntity.setTitle(roomInfo.getTitle());
+        log.info("Update Room Success which " +
+                "Description is : "+roomEntity.getDescription()+
+                "State is : "+roomEntity.getState()+
+                "IsPublic is : "+roomEntity.getIsPublic()+
+                "Title is : "+roomEntity.getTitle());
+        return this.roomMapper.toRoomWithoutUserDto(this.roomRepository.save(roomEntity));
+    }
+
+    private RoomEntity getRoomEntityByID(String ID, String userEmail){
         UUID roomID=convertToUUID(ID);
         log.info("Room ID is in right format " + roomID);
 
@@ -138,14 +162,12 @@ public class RoomServiceImpl implements RoomService {
         }
 
         if(roomOptional.isEmpty())
-            return this.roomMapper.toRoomWithoutUserDto(sharedRoomEntityOptional.get().getRoom());
+            return (sharedRoomEntityOptional.get().getRoom());
 
         log.info("sharedRoomEntityOptional is already Null");
-        return this.roomMapper.toRoomWithoutUserDto(roomOptional.get());
+        return (roomOptional.get());
     }
-
-    public UUID convertToUUID(String ID)
-    {
+    public UUID convertToUUID(String ID) {
         try {
             return UUID.fromString(ID);
         }
@@ -153,43 +175,6 @@ public class RoomServiceImpl implements RoomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
 
-    }
-    @Override
-    public RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
-        Optional<RoomEntity> roomOptional = this.roomRepository.findById(roomId);
-        Optional<SharedRoomEntity> sharedRoomOptional = this.sharedRoomRepository.findById(0L);
-        List<String> collaboratorEmailOptional = new ArrayList<>();
-        if (roomOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
-        }
-
-        if(!sharedRoomOptional.isEmpty()){
-            SharedRoomEntity sharedRoom = sharedRoomOptional.get();
-//            collaboratorEmailOptional = sharedRoom.getCollaborator();
-        }
-
-        RoomEntity roomEntity = roomOptional.get();
-
-        boolean isOwner = roomEntity.getUser().getEmail().equalsIgnoreCase(userEmail);
-        boolean isCollaborator =false;
-        //roomEntity.getUser().getEmail().equalsIgnoreCase(collaboratorEmailOptional);
-        for(String collaboratorEmail:collaboratorEmailOptional){
-            if(roomEntity.getUser().getEmail().equalsIgnoreCase(collaboratorEmail)){
-                isCollaborator=true;
-                break;
-            }
-        }
-
-        if (!isOwner && !isCollaborator) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You're not authorized to update this room!");
-        }
-
-        roomEntity.setTitle(roomInfo.getTitle());
-        roomEntity.setDescription(roomInfo.getDescription());
-        roomEntity.setState(roomInfo.getState());
-        roomEntity.setIsPublic(roomInfo.getIsPublic());
-
-        return this.roomMapper.toDto(this.roomRepository.save(roomEntity));
     }
 
 
