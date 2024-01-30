@@ -1,7 +1,5 @@
 package com.example.vrc.rooms.services;
 
-import com.example.vrc.authentication.DTOs.UserDTO;
-import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
 import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 
@@ -15,12 +13,8 @@ public interface RoomService {
     List<RoomWithoutUserDTO> getRooms(String userEmail);
     List<RoomWithoutUserDTO> getSharedRooms(String userEmail);
     RoomWithoutUserDTO getRoomByID(String roomID, String userEmail);
-    RoomWithoutUserDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
-
-
+    RoomWithoutUserDTO updateRoom(String roomId, RoomWithoutUserDTO roomInfo, String userEmail);
+    List<String> getAllCollaborator(UUID roomID);
+    List<RoomWithoutUserDTO> getAllRooms(String userEmail);
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
-
-    List<UserDTO>getAllCollaborator(UUID roomID);
-
-    List<RoomDTO> getAllRooms(String userEmail);
 }

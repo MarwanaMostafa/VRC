@@ -98,10 +98,9 @@ public class RoomController {
     @Operation(summary = API_PATCH_ROOMID_UPDATE_VALUES, description = API_PATCH_ROOMID_UPDATE_DESCRIPTION)
     @PatchMapping("/{roomId}/update")
     @ApiFullResponseGetRoomByID
-    ResponseEntity<RoomWithoutUserDTO> updateRoom(Authentication auth, @PathVariable UUID roomId, @Valid @RequestBody RoomWithoutUserDTO roomDTO, Errors errors) throws ResponseStatusException {
+    ResponseEntity<RoomWithoutUserDTO> updateRoom(Authentication auth, @PathVariable String roomId, @Valid @RequestBody RoomWithoutUserDTO roomDTO, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
         String userEmail = auth.getName();
-
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomService.updateRoom(roomId, roomDTO, userEmail);
         sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);

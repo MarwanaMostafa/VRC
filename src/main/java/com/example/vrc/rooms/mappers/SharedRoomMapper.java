@@ -14,6 +14,4 @@ public interface SharedRoomMapper {
     SharedRoomEntity toEntity(SharedRoomDTO sharedRoomDTO);
 
     SharedRoomDTO toDto(SharedRoomEntity sharedRoom);
-
-    List<SharedRoomEntity> toEntities(List<SharedRoomDTO> sharedRoomDTOS);
 }
