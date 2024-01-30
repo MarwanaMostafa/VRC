@@ -1,30 +1,20 @@
 package com.example.vrc.rooms.services;
 
-import com.example.vrc.authentication.DTOs.UserDTO;
-import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
 import com.example.vrc.rooms.DTOs.SharedRoomDTO;
-import org.apache.catalina.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public interface RoomService {
-    RoomDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
-    RoomDTO updateRoom(UUID roomId, RoomWithoutUserDTO roomInfo, String userEmail);
-
-    List<RoomDTO> getRooms(String userEmail);
-    RoomDTO getRoomByID(UUID roomID, String userEmail);
-    RoomDTO shareRoomById(UUID roomID);
-
+    RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
+    String addCollaborator(SharedRoomDTO sharedRoom);
+    RoomWithoutUserDTO shareRoomById(String roomID);
+    List<RoomWithoutUserDTO> getRooms(String userEmail);
+    List<RoomWithoutUserDTO> getSharedRooms(String userEmail);
+    RoomWithoutUserDTO getRoomByID(String roomID, String userEmail);
+    RoomWithoutUserDTO updateRoom(String roomId, RoomWithoutUserDTO roomInfo, String userEmail);
+    List<String> getAllCollaborator(UUID roomID);
+    List<RoomWithoutUserDTO> getAllRooms(String userEmail);
     boolean isUserAuthorizedForRoom(UUID roomId, String userEmail);
-
-    RoomDTO addCollaborator(UUID roomID, String collaboratorEmail);
-
-    List<SharedRoomDTO> getSharedRooms(String userEmail);
-
-    List<UserDTO>getAllCollaborator(UUID roomID);
-
-    List<RoomDTO> getAllRooms(String userEmail);
 }

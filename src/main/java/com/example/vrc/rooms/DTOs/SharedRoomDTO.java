@@ -14,21 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SharedRoomDTO {
-
     @NotEmpty
     @Email
-    private List<String> collaboratorEmail;
-
+    private String collaboratorEmail;
     @NotEmpty
-    private UUID id;
-
-
-    public SharedRoomDTO(UUID id,List<String> collaboratorEmail){
-        this.id=id;
-        this.collaboratorEmail=collaboratorEmail;
-    }
-    public UUID getId() {
-        return id;
-    }
-
+    private String id;
 }

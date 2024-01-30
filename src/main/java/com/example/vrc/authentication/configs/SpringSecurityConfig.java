@@ -18,7 +18,7 @@ public class SpringSecurityConfig {
     public static final String[] allowedURLs =new String[]{
         "/h2-console/**", "/error","/v3/api-docs","/v3/api-docs/**", "/swagger-ui","/swagger-ui/**",
         "/api/sign-up", "/api/login", "/api/forgot-password","/api/set-password","/api/set-password/**"
-            ,"/api/rooms/shared-room"
+            ,"/api/rooms/publicRoom/**","/api/rooms/publicRoom"
     };
 
     @Autowired

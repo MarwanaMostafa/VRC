@@ -8,9 +8,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RoomWithoutUserMapper {
-    RoomEntity toEntity(RoomWithoutUserDTO roomWithoutUserDTO);
-
     RoomWithoutUserDTO toDto(RoomEntity roomEntity);
-
     List<RoomWithoutUserDTO> toDtoList(List<RoomEntity> rooms);
 }

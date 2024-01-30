@@ -1,12 +1,19 @@
 package com.example.vrc.rooms.models;
 
 import jakarta.persistence.*;
-import java.util.UUID;
+
+import java.util.*;
 
 import com.example.vrc.authentication.models.UserEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "room")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RoomEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,51 +36,11 @@ public class RoomEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    public UUID getId() {
-        return id;
-    }
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "room", cascade = CascadeType.ALL)
+    private List<SharedRoomEntity> sharedRooms = new ArrayList<>();
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public Boolean getIsPublic() {
-        return isPublic;
-    }
-
-    public void setIsPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
+    // Add a collaborator to the list
+    public void addCollaborator(SharedRoomEntity collaborator) {
+        sharedRooms.add(collaborator);
     }
 }
