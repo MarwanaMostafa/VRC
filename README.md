@@ -43,6 +43,149 @@ Replace "your-name" with your name or identifier like **`Marwan, Islam, Rana, Em
 2-After approval, create a pull request from the feature branch to the master branch. Again, ensure that a team member reviews the pull request before merging. 📤🧩🚀🏆
 
 ---
+## **Folder Structure 📁**
+```
+|   .gitignore                   
+|   mvnw                         
+|   mvnw.cmd                     
+|   pom.xml                      
+|   README.md                    
+|   VRC.iml
++---.jpb
+|       jpb-settings.xml
+|
++---.mvn
+|   \---wrapper
+|           maven-wrapper.jar
+|           maven-wrapper.properties
+|
++---src
+|   +---main
+|   |   +---java
+|   |   |   \---com
+|   |   |       \---vrc
+|   |   |           |   VrcApplication.java
+|   |   |           |
+|   |   |           +---assets
+|   |   |           |   +---configs
+|   |   |           |   |       AssetsSwaggerConfig.java
+|   |   |           |   |
+|   |   |           |   +---controllers
+|   |   |           |   |       AssetsController.java
+|   |   |           |   |
+|   |   |           |   \---services
+|   |   |           |           Asset.java
+|   |   |           |           HdrisAssetsService.java
+|   |   |           |           ModelsAssetsService.java
+|   |   |           |
+|   |   |           +---authentication
+|   |   |           |   +---common
+|   |   |           |   |   \---documentation
+|   |   |           |   |           DocConstant.java
+|   |   |           |   |
+|   |   |           |   +---configs
+|   |   |           |   |       AuthenticationSwaggerConfig.java
+|   |   |           |   |       EmailConfig.java
+|   |   |           |   |       SpringSecurityConfig.java
+|   |   |           |   |
+|   |   |           |   +---controllers
+|   |   |           |   |       AuthController.java
+|   |   |           |   |       RUserCredentials.java
+|   |   |           |   |
+|   |   |           |   +---DTOs
+|   |   |           |   |       ResetPasswordData.java
+|   |   |           |   |       UserDTO.java
+|   |   |           |   |       UserWithoutPasswordDTO.java
+|   |   |           |   |
+|   |   |           |   +---Exception
+|   |   |           |   |       PasswordMismatchException.java
+|   |   |           |   |
+|   |   |           |   +---mappers
+|   |   |           |   |       UserMapper.java
+|   |   |           |   |       UserWithoutPasswordMapper.java
+|   |   |           |   |
+|   |   |           |   +---models
+|   |   |           |   |       UserEntity.java
+|   |   |           |   |
+|   |   |           |   +---repositories
+|   |   |           |   |       UserRepository.java
+|   |   |           |   |
+|   |   |           |   +---services
+|   |   |           |   |   |   AuthService.java
+|   |   |           |   |   |   UserService.java
+|   |   |           |   |   |
+|   |   |           |   |   \---impl
+|   |   |           |   |           AuthServiceImpl.java
+|   |   |           |   |           UserServiceImpl.java
+|   |   |           |   |
+|   |   |           |   \---utilities
+|   |   |           |           EmailUtil.java
+|   |   |           |           JwtRequestFilter.java
+|   |   |           |           JwtUtil.java
+|   |   |           |           UserPasswordEncryption.java
+|   |   |           |
+|   |   |           +---rooms
+|   |   |           |   +---common
+|   |   |           |   |   \---documentation
+|   |   |           |   |           DocConstant.java
+|   |   |           |   |
+|   |   |           |   +---configs
+|   |   |           |   |       RoomSwaggerConfig.java
+|   |   |           |   |       UserRoomChannelInterceptor.java
+|   |   |           |   |       WebSocketConfig.java
+|   |   |           |   |
+|   |   |           |   +---controllers
+|   |   |           |   |       RoomController.java
+|   |   |           |   |
+|   |   |           |   +---DTOs
+|   |   |           |   |       RoomDTO.java
+|   |   |           |   |       RoomWithoutUserDTO.java
+|   |   |           |   |       SharedRoomDTO.java
+|   |   |           |   |
+|   |   |           |   +---mappers
+|   |   |           |   |       RoomMapper.java
+|   |   |           |   |       RoomWithoutUserMapper.java
+|   |   |           |   |       SharedRoomMapper.java
+|   |   |           |   |
+|   |   |           |   +---models
+|   |   |           |   |       RoomEntity.java
+|   |   |           |   |       SharedRoomEntity.java
+|   |   |           |   |
+|   |   |           |   +---repositories
+|   |   |           |   |       RoomRepository.java
+|   |   |           |   |       SharedRoomRepository.java
+|   |   |           |   |
+|   |   |           |   +---services
+|   |   |           |   |   |   RoomService.java
+|   |   |           |   |   |
+|   |   |           |   |   \---impl
+|   |   |           |   |           RoomServiceImpl.java
+|   |   |           |   |
+|   |   |           |   \---swagger
+|   |   |           |           ApiFullResponseAddCollaborator.java
+|   |   |           |           ApiFullResponseCreate.java
+|   |   |           |           ApiFullResponseGetRoomByID.java
+|   |   |           |           ApiFullResponseGetRooms.java
+|   |   |           |           ApiFullResponseGetSharedRoom.java
+|   |   |           |           ApiFullResponseGetSharedRooms.java
+|   |   |           |           ApiFullResponseUpdateRoomByID.java
+|   |   |           |
+|   |   |           \---shared
+|   |   |               \---utilities
+|   |   |                       UserInputsValidator.java
+|   |   |
+|   |   \---resources
+|   |           application.properties
+|   |
+|   \---test
+|       \---java
+|           \---com
+|               +---example
+|               |   \---vrc
+|               \---vrc
+|                       VrcApplicationTests.java
+```
+---
 
 ## Technologies Used
 
