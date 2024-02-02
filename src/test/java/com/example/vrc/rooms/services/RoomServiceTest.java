@@ -101,7 +101,7 @@ class RoomServiceTest {
         );
         when(this.userWithoutPasswordMapper.toDto(any())).thenReturn(new UserWithoutPasswordDTO(
                 15L,
-                "","","",""
+                "test fName","test lName",userEmail,"testPassw"
         ));
         when(userService.getUserByEmail(userEmail)).thenReturn(userDTO);
 
