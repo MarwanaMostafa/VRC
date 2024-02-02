@@ -129,7 +129,6 @@ class RoomServiceTest {
         RoomWithoutUserDTO createdRoom = roomService.createRoom(roomInfo, userEmail);
 
         // Then
-
         ArgumentCaptor<RoomEntity> roomEntityArgumentCaptor =
                 ArgumentCaptor.forClass(RoomEntity.class);
 
@@ -146,7 +145,7 @@ class RoomServiceTest {
     void canAddExistUserToExistedRoom() {
         // Given
         String roomId = "123e4567-e89b-12d3-a456-556642440000";
-        //when(roomService.convertToUUID(anyString())).thenReturn(UUID.fromString(roomId));
+        when(roomService.convertToUUID(anyString())).thenReturn(UUID.randomUUID());
         //doReturn(UUID.randomUUID()).when(roomService.convertToUUID(anyString()));
         // Mock userDTO
         String collaboratorEmail = "collaborator@test.com";
@@ -171,11 +170,10 @@ class RoomServiceTest {
         assertEquals("User added to the room successfully", result);
     }
 
-    @Disabled
     @Test
     void addWrongCollaboratorToExistedRoom(){
         // Given
-        String roomId = "123e4567-e89b-12d3-a456-556642440000";//Wrong Room Id
+        String roomId = "123e4567-e89b-12d3-a456-556642440000"; // Wrong Room Id
         String collaboratorEmail = "collaborator@test.com";
         UserDTO userDTO = new UserDTO(
                 12L,
@@ -188,18 +186,33 @@ class RoomServiceTest {
 
         // Mock the shared room DTO
         SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(collaboratorEmail, roomId);
-        // Mock shared room repository save operation
-        when(sharedRoomRepository.save(any(SharedRoomEntity.class))).thenReturn(new SharedRoomEntity());
 
         // When and then
-        assertThatThrownBy(() ->roomService.addCollaborator(sharedRoomDTO))
+        assertThatThrownBy(() -> roomService.addCollaborator(sharedRoomDTO))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND)
                 .hasMessageContaining("There's no room with the entered id!");
     }
 
+    @Disabled
     @Test
     void shareRoomById() {
+        // Given
+        String roomId = "123e4567-e89b-12d3-a456-556642440000";
+        UUID roomUUID = UUID.randomUUID();
+        RoomEntity roomEntity = new RoomEntity(roomUUID, "Test Room", "Test Description", "Test State", true, new UserEntity(), new ArrayList<>());
+        when(roomService.convertToUUID(anyString())).thenReturn(UUID.randomUUID());
+        when(roomRepository.findById(roomUUID)).thenReturn(Optional.of(roomEntity));
+
+        // When
+        RoomWithoutUserDTO result = roomService.shareRoomById(roomId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("Test Room", result.getTitle());
+        assertEquals("Test Description", result.getDescription());
+        assertEquals("Test State", result.getState());
+        assertTrue(result.getIsPublic());
     }
 
     @Test
@@ -283,6 +296,7 @@ class RoomServiceTest {
         String roomId = "123e4567-e89b-12d3-a456-556642440000";
         String userEmail = "user@example.com";
 
+        // Mock the necessary dependencies
         when(roomService.convertToUUID(anyString())).thenReturn(UUID.randomUUID());
         when(roomMapper.toRoomWithoutUserDto(any(RoomEntity.class))).thenReturn(new RoomWithoutUserDTO());
 
@@ -298,11 +312,16 @@ class RoomServiceTest {
         RoomWithoutUserDTO actualRoom = roomService.getRoomByID(roomId, userEmail);
 
         // Then
-        assertNotNull(actualRoom);
-        assertEquals("Room Title", actualRoom.getTitle());
-        assertEquals("Room Description", actualRoom.getDescription());
-        assertEquals("Room State", actualRoom.getState());
-        assertTrue(actualRoom.getIsPublic());
+        ArgumentCaptor<RoomEntity> roomEntityArgumentCaptor =
+                ArgumentCaptor.forClass(RoomEntity.class);
+
+        verify(roomRepository)
+                .save(roomEntityArgumentCaptor.capture());
+
+        RoomEntity capturedRoom = roomEntityArgumentCaptor.getValue();
+        assertThat(capturedRoom).isEqualTo(actualRoom);
+
+
     }
 
 
@@ -423,6 +442,21 @@ class RoomServiceTest {
     }
 
     @Test
-    void isUserAuthorizedForRoom() {
+    void isUserAuthorizedForRoomReturnTure() {
+        // Given
+        UUID roomId = UUID.randomUUID();
+        String userEmail = "user@example.com";
+
+        // Mock room entity
+        RoomEntity roomEntity = new RoomEntity();
+        roomEntity.setUser(new UserEntity(1L,"Test FName","Test LName", "user@example.com", "password")); // Assuming the user's email is user@example.com
+
+        when(roomRepository.findById(roomId)).thenReturn(Optional.of(roomEntity));
+
+        // When
+        boolean isAuthorized = roomService.isUserAuthorizedForRoom(roomId, userEmail);
+
+        // Then
+        assertTrue(isAuthorized);
     }
 }
