@@ -13,6 +13,7 @@ import com.example.vrc.rooms.models.SharedRoomEntity;
 import com.example.vrc.rooms.repositories.RoomRepository;
 import com.example.vrc.rooms.repositories.SharedRoomRepository;
 import com.example.vrc.rooms.services.RoomService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -223,8 +224,11 @@ public class RoomServiceImpl implements RoomService {
         }
 
     }
-    public boolean isUserAuthorizedForRoom(UUID roomId, String userEmail) {
-        Optional<RoomEntity> room = roomRepository.findById(roomId);
-        return room.isPresent() && room.get().getUser().getEmail().equalsIgnoreCase(userEmail);
+
+    @Transactional
+    public boolean isUserACollaborator(UUID roomId, String userEmail) {
+        List<String> collaborators = this.getAllCollaborator(roomId);
+        return collaborators.contains(userEmail);
+
     }
 }
