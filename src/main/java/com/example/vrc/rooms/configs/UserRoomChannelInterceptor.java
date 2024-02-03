@@ -10,39 +10,38 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 
 
+@Component
+public class UserRoomChannelInterceptor implements ChannelInterceptor {
 
+    @Autowired
+    private RoomService roomService;
 
-    @Component
-    public class UserRoomChannelInterceptor implements ChannelInterceptor {
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(message);
+        String destination = accessor.getDestination();
 
-        @Autowired
-        private RoomService roomService;
-
-        @Override
-        public Message<?> preSend(Message<?> message, MessageChannel channel) {
-            SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(message);
-            String destination = accessor.getDestination();
-
-            if (destination != null && destination.startsWith("/topic/rooms/")) {
-                Authentication auth = (Authentication) accessor.getUser();
-                if (auth != null && auth.isAuthenticated()) {
-                    String userEmail = auth.getName();
-                    String destinationEmail = extractEmailFromDestination(destination);
-                    if (!userEmail.equalsIgnoreCase(destinationEmail)) {
-                        throw new AccessDeniedException("User not authorized for this room");
-                    }
+        if (destination != null && destination.startsWith("/topic/rooms/")) {
+            Authentication auth = (Authentication) accessor.getUser();
+            if (auth != null && auth.isAuthenticated()) {
+                String userEmail = auth.getName();
+                UUID roomId = extractRoomIdFromDestination(destination);
+                if (!roomService.isUserACollaborator(roomId, userEmail)) {
+                    throw new AccessDeniedException("User not authorized for this room");
                 }
             }
-            return message;
         }
-
-        private String extractEmailFromDestination(String destination) {
-            String[] parts = destination.split("/");
-            return parts.length > 3 ? parts[3] : "";
-        }
+        return message;
     }
+
+    private UUID extractRoomIdFromDestination(String destination) {
+        String[] parts = destination.split("/");
+        return parts.length > 3 ? UUID.fromString(parts[3]) : null;
+    }
+}
 
 
 
