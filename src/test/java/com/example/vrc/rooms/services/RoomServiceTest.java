@@ -529,7 +529,7 @@ class RoomServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(roomEntity));
 
         // When
-        boolean isAuthorized = roomService.isUserAuthorizedForRoom(roomId, userEmail);
+        boolean isAuthorized = roomService.isUserACollaborator(roomId, userEmail);
 
         // Then
         assertTrue(isAuthorized);
