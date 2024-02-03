@@ -3,6 +3,7 @@ package com.example.vrc.rooms.services.impl;
 import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.mappers.UserMapper;
 import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
+import com.example.vrc.authentication.models.UserEntity;
 import com.example.vrc.authentication.services.UserService;
 import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
@@ -45,6 +46,9 @@ public class RoomServiceImpl implements RoomService {
     public RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
         UserDTO userDTO = userService.getUserByEmail(userEmail);
         log.info("Fetching user who needs to create a room");
+        if(userDTO==null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with the entered email!");
+        }
         RoomDTO roomDTO = new RoomDTO(
                 null,
                 roomInfo.getTitle(),
@@ -215,6 +219,8 @@ public class RoomServiceImpl implements RoomService {
         log.info("sharedRoomEntityOptional is already Null");
         return (roomOptional.get());
     }
+
+    @Override
     public UUID convertToUUID(String ID) {
         try {
             return UUID.fromString(ID);
