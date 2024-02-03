@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
+
 import static com.example.vrc.rooms.common.documentation.DocConstant.RoomConstants.*;
 
 @Tag(name = API_NAME,description = API_DESCRIPTION)
@@ -43,7 +45,6 @@ public class RoomController {
 
         RoomWithoutUserDTO roomWithoutUserDTO =this.roomService.createRoom(roomDTO, userEmail);
 
-        sendRoomData(userEmail);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.CREATED);
     }
 
@@ -93,12 +94,16 @@ public class RoomController {
         UserInputsValidator.validate(errors);
         String userEmail = auth.getName();
         RoomWithoutUserDTO roomWithoutUserDTO = this.roomService.updateRoom(roomId, roomDTO, userEmail);
-        sendRoomData(userEmail);
+
+        updateRoomSocket(roomDTO.getId(), roomWithoutUserDTO);
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
-    void sendRoomData(String userEmail) {
-        List<RoomWithoutUserDTO> roomWithoutUserDTOS =  roomService.getRooms(userEmail);
-        messagingTemplate.convertAndSend("/topic/rooms/" + userEmail, roomWithoutUserDTOS);
+
+
+    void updateRoomSocket(UUID roomId, RoomWithoutUserDTO roomData){
+        System.out.println("Room id is " + roomId + roomData);
+        messagingTemplate.convertAndSend("/topic/rooms/" + roomData.getId(), roomData);
+
     }
 
 }
