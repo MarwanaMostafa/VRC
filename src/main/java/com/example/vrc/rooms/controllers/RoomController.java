@@ -99,6 +99,13 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = API_GET_ALL_COLLABORATORS_VALUES, description = API_GET_ALL_COLLABORATORS_DESCRIPTION)
+    @GetMapping("/get-all-collaborators")
+    @ApiFullResponseGetAllCollaborators
+    ResponseEntity<List<String>> getCollaborators(Authentication auth,String roomID) throws ResponseStatusException {
+        String userEmail = auth.getName();
+        return new ResponseEntity<>(this.roomService.getAllCollaborator(roomID,userEmail), HttpStatus.OK);
+    }
 
     void updateRoomSocket(UUID roomId, RoomWithoutUserDTO roomData){
         System.out.println("Room id is " + roomId + roomData);

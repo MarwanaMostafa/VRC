@@ -22,6 +22,9 @@ public interface DocConstant {
         String API_GET_SHARED_ROOMS_VALUES = "Get shared room.";
 
         String API_GET_SHARED_ROOMS_DESCRIPTION = "Get all shared rooms for user.";
+        String API_GET_ALL_COLLABORATORS_VALUES = "Get all collaborators for room.";
+
+        String API_GET_ALL_COLLABORATORS_DESCRIPTION = "Get all collaborators for room.";
 
     }
 }

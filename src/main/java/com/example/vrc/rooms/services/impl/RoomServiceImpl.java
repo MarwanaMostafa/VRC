@@ -180,6 +180,27 @@ public class RoomServiceImpl implements RoomService {
 
         return allUsers;
     }
+    @Override
+    public List<String> getAllCollaborator(String ID,String email) {
+        List<String> allUsers = new ArrayList<>();
+        UUID roomID=convertToUUID(ID);
+        Optional<RoomEntity> roomOptional = Optional.ofNullable(roomRepository.findByUserEmailIgnoreCaseAndId(email, roomID));
+
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,  "There is no room with the entered ID that belongs to you!");
+        }
+
+        List<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findByRoom_Id(roomID);
+
+        for (SharedRoomEntity sharedRoom : sharedRoomsOptional)
+            allUsers.add(sharedRoom.getCollaborator());
+
+        //Logger
+        for (String str : allUsers)
+            log.info("Collaborator in this room is : " + str);
+
+        return allUsers;
+    }
 
     @Override
     public List<RoomWithoutUserDTO> getAllRooms(String userEmail) {

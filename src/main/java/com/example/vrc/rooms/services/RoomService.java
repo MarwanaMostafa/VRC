@@ -15,6 +15,7 @@ public interface RoomService {
     RoomWithoutUserDTO getRoomByID(String roomID, String userEmail);
     RoomWithoutUserDTO updateRoom(String roomId, RoomWithoutUserDTO roomInfo, String userEmail);
     List<String> getAllCollaborator(UUID roomID);
+    List<String> getAllCollaborator(String roomID,String email);
     List<RoomWithoutUserDTO> getAllRooms(String userEmail);
     UUID convertToUUID(String ID);
     boolean isUserACollaborator(UUID roomId, String userEmail);
