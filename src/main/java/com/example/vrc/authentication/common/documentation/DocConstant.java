@@ -3,6 +3,8 @@ package com.example.vrc.authentication.common.documentation;
 public interface DocConstant {
     interface AuthenticationConstants {
         String API_NAME = "Authentication";
+        String API_CONTACTUS_NAME = "Contact Us.";
+        String API_CONTACTUS_DESCRIPTION = "Create Complaint.";
         String API_DESCRIPTION = "Manage Authentication flow for user ";
         String API_POST_SIGN_UP_VALUES = "Register to VRC.";
         String API_POST_SIGN_UP_DESCRIPTION = "Register users to enable them to log in to VRC.";
