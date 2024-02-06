@@ -18,7 +18,7 @@ public class SharedRoomEntity {
     @Column(name = "collaborator")
     private String collaborator;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "room_id")
 
     private RoomEntity room;
