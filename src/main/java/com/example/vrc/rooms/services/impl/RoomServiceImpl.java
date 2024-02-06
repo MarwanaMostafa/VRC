@@ -3,7 +3,6 @@ package com.example.vrc.rooms.services.impl;
 import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.mappers.UserMapper;
 import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
-import com.example.vrc.authentication.models.UserEntity;
 import com.example.vrc.authentication.services.UserService;
 import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
