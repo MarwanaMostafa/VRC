@@ -335,7 +335,7 @@ class RoomServiceTest {
         when(roomMapper.toRoomWithoutUserDto(roomEntity)).thenReturn(roomWithoutUserDTO);
 
 
-        when(roomRepository.findByUserEmailAndId(userEmail, roomUUID)).thenReturn(roomEntity);
+//        when(roomRepository.findByUserEmailAndId(userEmail, roomUUID)).thenReturn(roomEntity);
 
         when(sharedRoomRepository.findByRoom_IdAndAndCollaboratorIgnoreCase(roomUUID, userEmail)).thenReturn(sharedRoomEntity);
 
@@ -394,7 +394,7 @@ class RoomServiceTest {
         // Mock roomMapper
         when(roomMapper.toRoomWithoutUserDto(roomEntity)).thenReturn(roomWithoutUserDTO);
 
-        when(roomRepository.findByUserEmailAndId(userEmail, roomUUID)).thenReturn(roomEntity);
+//        when(roomRepository.findByUserEmailAndId(userEmail, roomUUID)).thenReturn(roomEntity);
 
         when(sharedRoomRepository.findByRoom_IdAndAndCollaboratorIgnoreCase(roomUUID, userEmail)).thenReturn(sharedRoomEntity);
 
