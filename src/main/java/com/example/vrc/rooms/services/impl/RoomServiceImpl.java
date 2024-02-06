@@ -16,7 +16,9 @@ import com.example.vrc.rooms.services.RoomService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,6 +42,11 @@ public class RoomServiceImpl implements RoomService {
     private UserWithoutPasswordMapper userWithoutPasswordMapper;
     @Autowired
     private SharedRoomRepository sharedRoomRepository;
+
+    @Autowired
+    @Lazy
+    private SimpMessagingTemplate messagingTemplate;
+
 
     @Override
     public RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail) {
@@ -100,7 +107,12 @@ public class RoomServiceImpl implements RoomService {
 
         //save in DB
         this.sharedRoomRepository.save(sharedRoom);
+        notifyAddedCollaborators(userDTO.getEmail(), room);
         return "User added to the room successfully";
+    }
+    public void notifyAddedCollaborators(String name, RoomEntity room){
+    RoomWithoutUserDTO roomWithoutUserDTO = this.roomMapper.toRoomWithoutUserDto(room);
+        messagingTemplate.convertAndSendToUser(name, "/topic/added", roomWithoutUserDTO);
     }
 
     public String deleteCollaborator(SharedRoomDTO sharedRoomDTO, String ownerEmail) {
@@ -129,11 +141,17 @@ public class RoomServiceImpl implements RoomService {
         for (SharedRoomEntity SharedRoom : room.getSharedRooms()) {
             if (SharedRoom.getCollaborator().equals(userDTO.getEmail())) {
                     this.sharedRoomRepository.delete(SharedRoom);
+                    notifyRemovedCollaborators(userDTO.getEmail(), room);
                     return "Delete Successful.";
             }
         }
 
         return userDTO.getEmail()+"Not belong to this room.";
+    }
+
+    public void notifyRemovedCollaborators(String name, RoomEntity room){
+        RoomWithoutUserDTO roomWithoutUserDTO = this.roomMapper.toRoomWithoutUserDto(room);
+        messagingTemplate.convertAndSendToUser(name, "/topic/removed", roomWithoutUserDTO);
     }
     @Override
     public RoomWithoutUserDTO shareRoomById(String ID) {

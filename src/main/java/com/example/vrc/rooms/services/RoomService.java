@@ -2,6 +2,7 @@ package com.example.vrc.rooms.services;
 
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
 import com.example.vrc.rooms.DTOs.SharedRoomDTO;
+import com.example.vrc.rooms.models.RoomEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,4 +21,6 @@ public interface RoomService {
     List<RoomWithoutUserDTO> getAllRooms(String userEmail);
     UUID convertToUUID(String ID);
     boolean isUserACollaborator(UUID roomId, String userEmail);
+
+    void notifyAddedCollaborators(String name, RoomEntity room);
 }
