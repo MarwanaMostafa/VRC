@@ -9,12 +9,14 @@ import java.util.UUID;
 public interface RoomService {
     RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
     String addCollaborator(SharedRoomDTO sharedRoom,String ownerEmail);
+    String deleteCollaborator(SharedRoomDTO sharedRoom,String ownerEmail);
     RoomWithoutUserDTO shareRoomById(String roomID);
     List<RoomWithoutUserDTO> getRooms(String userEmail);
     List<RoomWithoutUserDTO> getSharedRooms(String userEmail);
     RoomWithoutUserDTO getRoomByID(String roomID, String userEmail);
     RoomWithoutUserDTO updateRoom(String roomId, RoomWithoutUserDTO roomInfo, String userEmail);
     List<String> getAllCollaborator(UUID roomID);
+    List<String> getAllCollaborator(String roomID,String email);
     List<RoomWithoutUserDTO> getAllRooms(String userEmail);
     UUID convertToUUID(String ID);
     boolean isUserACollaborator(UUID roomId, String userEmail);

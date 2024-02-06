@@ -103,6 +103,38 @@ public class RoomServiceImpl implements RoomService {
         return "User added to the room successfully";
     }
 
+    public String deleteCollaborator(SharedRoomDTO sharedRoomDTO, String ownerEmail) {
+        String collaboratorEmail = sharedRoomDTO.getCollaboratorEmail();
+        UUID ID = convertToUUID(sharedRoomDTO.getId());
+        log.info("Collaborate Email is {} and UUID is {}", collaboratorEmail, ID);
+
+        Optional<RoomEntity> roomOptional = Optional.ofNullable(this.roomRepository.findByUserEmailIgnoreCaseAndId(ownerEmail, ID));
+        log.info("Check If Room ID is Exist {}", roomOptional.isPresent());
+        UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
+        log.info("We Get User DTO To Check If this Collaborator email exist or not");
+        //Check if this room exist
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no room with the entered ID that belongs to you!");
+        }
+
+        //Check if that user exist
+        if (userDTO == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with the entered email!");
+        }
+
+        RoomEntity room = roomOptional.get();
+
+        log.info("Check List Collaborators For Room ID to know if user already belong to or not ");
+        //Check if this room is Shared with this collaborator or no
+        for (SharedRoomEntity SharedRoom : room.getSharedRooms()) {
+            if (SharedRoom.getCollaborator().equals(userDTO.getEmail())) {
+                    this.sharedRoomRepository.delete(SharedRoom);
+                    return "Delete Successful.";
+            }
+        }
+
+        return userDTO.getEmail()+"Not belong to this room.";
+    }
     @Override
     public RoomWithoutUserDTO shareRoomById(String ID) {
         UUID roomID=convertToUUID(ID);
@@ -168,6 +200,28 @@ public class RoomServiceImpl implements RoomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
         allUsers.add(roomOptional.get().getUser().getEmail());
+
+        List<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findByRoom_Id(roomID);
+
+        for (SharedRoomEntity sharedRoom : sharedRoomsOptional)
+            allUsers.add(sharedRoom.getCollaborator());
+
+        //Logger
+        for (String str : allUsers)
+            log.info("Collaborator in this room is : " + str);
+
+        return allUsers;
+    }
+
+    @Override
+    public List<String> getAllCollaborator(String ID,String email) {
+        List<String> allUsers = new ArrayList<>();
+        UUID roomID=convertToUUID(ID);
+        Optional<RoomEntity> roomOptional = Optional.ofNullable(roomRepository.findByUserEmailIgnoreCaseAndId(email, roomID));
+
+        if (roomOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,  "There is no room with the entered ID that belongs to you!");
+        }
 
         List<SharedRoomEntity> sharedRoomsOptional = sharedRoomRepository.findByRoom_Id(roomID);
 
