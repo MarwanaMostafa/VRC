@@ -10,7 +10,6 @@ public class UserInputsValidator {
         if(!errors.hasErrors()) {
             return;
         }
-
         ObjectError firstError = errors.getAllErrors().get(0);
 
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, firstError.getDefaultMessage());
