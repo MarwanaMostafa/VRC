@@ -62,6 +62,7 @@ class RoomControllerTest {
     @Mock
     RoomWithoutUserDTO roomDTO = new RoomWithoutUserDTO(
             UUID.randomUUID(),
+            1L,
             "Test title",
             "Test Describtion",
             "Test State",
