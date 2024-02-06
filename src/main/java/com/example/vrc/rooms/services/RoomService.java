@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface RoomService {
     RoomWithoutUserDTO createRoom(RoomWithoutUserDTO roomInfo, String userEmail);
-    String addCollaborator(SharedRoomDTO sharedRoom,String ownerEmail);
+    String addCollaborator(SharedRoomDTO sharedRoom);
     RoomWithoutUserDTO shareRoomById(String roomID);
     List<RoomWithoutUserDTO> getRooms(String userEmail);
     List<RoomWithoutUserDTO> getSharedRooms(String userEmail);

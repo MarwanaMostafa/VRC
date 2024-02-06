@@ -9,5 +9,5 @@ import java.util.UUID;
 @Repository
 public interface RoomRepository extends JpaRepository<RoomEntity, UUID> {
     List<RoomEntity> findAllByUserEmailIgnoreCase(String userEmail);
-    RoomEntity findByUserEmailIgnoreCaseAndId(String userEmail,UUID uuid);
+    RoomEntity findByUserEmailAndId(String userEmail,UUID uuid);
 }

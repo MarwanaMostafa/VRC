@@ -3,6 +3,7 @@ package com.example.vrc.rooms.services.impl;
 import com.example.vrc.authentication.DTOs.UserDTO;
 import com.example.vrc.authentication.mappers.UserMapper;
 import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
+import com.example.vrc.authentication.models.UserEntity;
 import com.example.vrc.authentication.services.UserService;
 import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
@@ -66,19 +67,21 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public String addCollaborator(SharedRoomDTO sharedRoomDTO,String ownerEmail) {
+    public String addCollaborator(SharedRoomDTO sharedRoomDTO) {
 
         String collaboratorEmail=sharedRoomDTO.getCollaboratorEmail();
         UUID ID =convertToUUID(sharedRoomDTO.getId());
         log.info("Collaborate Email is {} and UUID is {}",collaboratorEmail,ID);
 
-        Optional<RoomEntity> roomOptional = Optional.ofNullable(this.roomRepository.findByUserEmailIgnoreCaseAndId(ownerEmail, ID));
+        Optional<RoomEntity> roomOptional = this.roomRepository.findById(ID);
         log.info("Check If Room ID is Exist {}", roomOptional.isPresent());
+
         UserDTO userDTO = userService.getUserByEmail(collaboratorEmail);
         log.info("We Get User DTO To Check If this Collaborator email exist or not");
+
         //Check if this room exist
         if (roomOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no room with the entered ID that belongs to you!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no room with the entered id!");
         }
 
         //Check if that user exist
@@ -91,11 +94,11 @@ public class RoomServiceImpl implements RoomService {
         log.info("Check List Collaborators For Room ID to know if user already added or not ");
         //Check if this room is Shared with this collaborator or no
         for (SharedRoomEntity SharedRoom : room.getSharedRooms()) {
-            if (SharedRoom.getCollaborator().equals(userDTO.getEmail()))
+            if (SharedRoom.getCollaborator().equals(collaboratorEmail))
                 return "This user already added in this room before";
         }
 
-        SharedRoomEntity sharedRoom = new SharedRoomEntity(userDTO.getEmail(),room);
+        SharedRoomEntity sharedRoom = new SharedRoomEntity(collaboratorEmail,room);
         room.addCollaborator(sharedRoom);
 
         //save in DB
@@ -199,7 +202,7 @@ public class RoomServiceImpl implements RoomService {
         UUID roomID=convertToUUID(ID);
         log.info("Room ID is in right format " + roomID);
 
-        Optional<RoomEntity> roomOptional = Optional.ofNullable(this.roomRepository.findByUserEmailIgnoreCaseAndId(userEmail, roomID));
+        Optional<RoomEntity> roomOptional = Optional.ofNullable(this.roomRepository.findByUserEmailAndId(userEmail, roomID));
         log.info("Room Option is null ? " + roomOptional.isEmpty());
 
         Optional<SharedRoomEntity>sharedRoomEntityOptional= Optional.ofNullable(this.sharedRoomRepository.findByRoom_IdAndAndCollaboratorIgnoreCase(roomID, userEmail));

@@ -1,5 +1,6 @@
 package com.example.vrc.rooms.repositories;
 
+import com.example.vrc.rooms.models.RoomEntity;
 import com.example.vrc.rooms.models.SharedRoomEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

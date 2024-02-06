@@ -4,6 +4,8 @@ import com.example.vrc.rooms.DTOs.SharedRoomDTO;
 import com.example.vrc.rooms.models.SharedRoomEntity;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface SharedRoomMapper {
     SharedRoomEntity toEntity(SharedRoomDTO sharedRoomDTO);

@@ -51,9 +51,9 @@ public class RoomController {
     @Operation(summary = API_POST_ADD_COLLABORATOR_VALUES, description = API_POST_ADD_COLLABORATOR_DESCRIPTION)
     @PostMapping("/add-collaborator")
     @ApiFullResponseAddCollaborator
-    ResponseEntity<String> addCollaborator(Authentication auth,@Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
+    ResponseEntity<String> addCollaborator(@Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
-        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom,auth.getName()), HttpStatus.OK);
+        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom), HttpStatus.OK);
     }
 
     @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)

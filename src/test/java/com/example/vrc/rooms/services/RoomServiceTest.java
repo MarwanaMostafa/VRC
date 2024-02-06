@@ -149,7 +149,7 @@ class RoomServiceTest {
 
 
         // When
-        String result = roomService.addCollaborator(sharedRoomDTO, "email@email.com");
+        String result = roomService.addCollaborator(sharedRoomDTO);
 
         // Then
         assertNotNull(result);
@@ -175,7 +175,7 @@ class RoomServiceTest {
         SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(collaboratorEmail, roomId);
 
         // When and then
-        assertThatThrownBy(() -> roomService.addCollaborator(sharedRoomDTO,"email@email.com"))
+        assertThatThrownBy(() -> roomService.addCollaborator(sharedRoomDTO))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND)
                 .hasMessageContaining("There's no room with the entered id!");
