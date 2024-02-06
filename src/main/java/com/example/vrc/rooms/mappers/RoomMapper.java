@@ -12,6 +12,7 @@ public interface RoomMapper {
     RoomEntity toEntity(RoomDTO roomDTO);
     //remove toDO
     RoomDTO toDto(RoomEntity roomEntity);
+    @Mapping(source = "user.id", target = "ownerId")
     RoomWithoutUserDTO toRoomWithoutUserDto(RoomEntity roomEntity);
 
     List<RoomWithoutUserDTO> toDtoList(List<RoomEntity> rooms);
