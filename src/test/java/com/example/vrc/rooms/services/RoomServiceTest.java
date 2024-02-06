@@ -149,7 +149,7 @@ class RoomServiceTest {
 
 
         // When
-        String result = roomService.addCollaborator(sharedRoomDTO);
+        String result = roomService.addCollaborator(sharedRoomDTO, "email@email.com");
 
         // Then
         assertNotNull(result);
@@ -175,7 +175,7 @@ class RoomServiceTest {
         SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(collaboratorEmail, roomId);
 
         // When and then
-        assertThatThrownBy(() -> roomService.addCollaborator(sharedRoomDTO))
+        assertThatThrownBy(() -> roomService.addCollaborator(sharedRoomDTO,"email@email.com"))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND)
                 .hasMessageContaining("There's no room with the entered id!");
@@ -335,7 +335,7 @@ class RoomServiceTest {
         when(roomMapper.toRoomWithoutUserDto(roomEntity)).thenReturn(roomWithoutUserDTO);
 
 
-        when(roomRepository.findByUserEmailAndId(userEmail, roomUUID)).thenReturn(roomEntity);
+        when(roomRepository.findByUserEmailIgnoreCaseAndId(userEmail, roomUUID)).thenReturn(roomEntity);
 
         when(sharedRoomRepository.findByRoom_IdAndAndCollaboratorIgnoreCase(roomUUID, userEmail)).thenReturn(sharedRoomEntity);
 
@@ -394,7 +394,7 @@ class RoomServiceTest {
         // Mock roomMapper
         when(roomMapper.toRoomWithoutUserDto(roomEntity)).thenReturn(roomWithoutUserDTO);
 
-        when(roomRepository.findByUserEmailAndId(userEmail, roomUUID)).thenReturn(roomEntity);
+        when(roomRepository.findByUserEmailIgnoreCaseAndId(userEmail, roomUUID)).thenReturn(roomEntity);
 
         when(sharedRoomRepository.findByRoom_IdAndAndCollaboratorIgnoreCase(roomUUID, userEmail)).thenReturn(sharedRoomEntity);
 
@@ -529,7 +529,7 @@ class RoomServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(roomEntity));
 
         // When
-        boolean isAuthorized = roomService.isUserAuthorizedForRoom(roomId, userEmail);
+        boolean isAuthorized = roomService.isUserACollaborator(roomId, userEmail);
 
         // Then
         assertTrue(isAuthorized);

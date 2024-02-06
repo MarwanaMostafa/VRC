@@ -36,7 +36,7 @@ public class RoomEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
     private List<SharedRoomEntity> sharedRooms = new ArrayList<>();
 
     // Add a collaborator to the list

@@ -51,9 +51,9 @@ public class RoomController {
     @Operation(summary = API_POST_ADD_COLLABORATOR_VALUES, description = API_POST_ADD_COLLABORATOR_DESCRIPTION)
     @PostMapping("/add-collaborator")
     @ApiFullResponseAddCollaborator
-    ResponseEntity<String> addCollaborator(@Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
+    ResponseEntity<String> addCollaborator(Authentication auth,@Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
         UserInputsValidator.validate(errors);
-        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom), HttpStatus.OK);
+        return new ResponseEntity<>(roomService.addCollaborator(sharedRoom,auth.getName()), HttpStatus.OK);
     }
 
     @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
@@ -99,7 +99,21 @@ public class RoomController {
         return new ResponseEntity<>(roomWithoutUserDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = API_GET_ALL_COLLABORATORS_VALUES, description = API_GET_ALL_COLLABORATORS_DESCRIPTION)
+    @GetMapping("/get-all-collaborators/{roomID}")
+    @ApiFullResponseGetAllCollaborators
+    ResponseEntity<List<String>> getCollaborators(Authentication auth,@PathVariable String roomID) throws ResponseStatusException {
+        String userEmail = auth.getName();
+        return new ResponseEntity<>(this.roomService.getAllCollaborator(roomID,userEmail), HttpStatus.OK);
+    }
 
+    @Operation(summary = API_DELETE_REMOVE_COLLABORATOR_VALUES, description = API_DELETE_REMOVE_COLLABORATOR_DESCRIPTION)
+    @DeleteMapping("/delete-collaborator")
+    @ApiFullResponseDeleteCollaborator
+    ResponseEntity<String> DeleteCollaborator(Authentication auth,@Valid @RequestBody SharedRoomDTO sharedRoom, Errors errors) throws ResponseStatusException {
+        UserInputsValidator.validate(errors);
+        return new ResponseEntity<>(roomService.deleteCollaborator(sharedRoom,auth.getName()), HttpStatus.OK);
+    }
     void updateRoomSocket(UUID roomId, RoomWithoutUserDTO roomData){
         System.out.println("Room id is " + roomId + roomData);
         messagingTemplate.convertAndSend("/topic/rooms/" + roomData.getId(), roomData);
