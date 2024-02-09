@@ -57,7 +57,7 @@ public class RoomController {
     }
 
     @Operation(summary = API_GET_ROOM_ID_VALUES, description = API_GET_ROOM_ID_DESCRIPTION)
-    @GetMapping("/publicRoom/{roomID}")
+    @GetMapping("/public-room/{roomID}")
     @ApiFullResponseGetSharedRoom
     ResponseEntity<RoomWithoutUserDTO> sharedRoom(@PathVariable String roomID) throws ResponseStatusException {
         return new ResponseEntity<>(this.roomService.shareRoomById(roomID), HttpStatus.OK);

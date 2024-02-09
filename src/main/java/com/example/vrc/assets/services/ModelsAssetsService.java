@@ -8,6 +8,7 @@ import com.example.vrc.assets.services.singleObject.PolyHavenModelObject;
 import com.example.vrc.assets.services.singleObject.PolyPizzaModelObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class ModelsAssetsService {
     private ConcurrentHashMap<String , String> lastQuery = new ConcurrentHashMap<>();
     private final JsonParser jsonParser = new JsonParser();
 
+    @Cacheable(value = "modelObjectCache", key = "#query +#pageNumber+#pageSize")
     public JSONObject fetchObjects(String userEmail , String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
         if(modelsObjects.isEmpty()){
             fetchAllObjects();

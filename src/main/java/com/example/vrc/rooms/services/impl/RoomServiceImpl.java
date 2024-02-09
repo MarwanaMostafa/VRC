@@ -16,6 +16,9 @@ import com.example.vrc.rooms.services.RoomService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -110,11 +113,13 @@ public class RoomServiceImpl implements RoomService {
         notifyAddedCollaborators(userDTO.getEmail(), room);
         return "User added to the room successfully";
     }
+
     public void notifyAddedCollaborators(String name, RoomEntity room){
     RoomWithoutUserDTO roomWithoutUserDTO = this.roomMapper.toRoomWithoutUserDto(room);
         messagingTemplate.convertAndSendToUser(name, "/topic/added", roomWithoutUserDTO);
     }
 
+    @Override
     public String deleteCollaborator(SharedRoomDTO sharedRoomDTO, String ownerEmail) {
         String collaboratorEmail = sharedRoomDTO.getCollaboratorEmail();
         UUID ID = convertToUUID(sharedRoomDTO.getId());
@@ -154,6 +159,7 @@ public class RoomServiceImpl implements RoomService {
         messagingTemplate.convertAndSendToUser(name, "/topic/removed", roomWithoutUserDTO);
     }
     @Override
+    @Cacheable(value = "roomCache", key = "#ID")
     public RoomWithoutUserDTO shareRoomById(String ID) {
         UUID roomID=convertToUUID(ID);
         log.info("User Enter Right Room ID {}",roomID);
@@ -185,12 +191,19 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Cacheable(value = "privateRoomCache", key = "#ID + #userEmail")
     public RoomWithoutUserDTO getRoomByID(String ID, String userEmail) {
         RoomEntity roomEntity=getRoomEntityByID(ID,userEmail);
         return this.roomMapper.toRoomWithoutUserDto(roomEntity);
     }
 
     @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "roomCache", key = "#roomId"),
+                    @CachePut(value = "privateRoomCache", key = "#roomId + #userEmail")
+            }
+    )
     public RoomWithoutUserDTO updateRoom(String roomId, RoomWithoutUserDTO roomInfo, String userEmail) {
         log.info("Start Updating");
         RoomEntity roomEntity = getRoomEntityByID(roomId, userEmail);
