@@ -9,6 +9,8 @@ import com.example.vrc.authentication.utilities.JwtUtil;
 import com.example.vrc.authentication.utilities.UserPasswordEncryption;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,6 +59,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Cacheable(value = "userCache", key = "#userCredentials.email + '-' + #userCredentials.password")
     public UserWithoutPasswordDTO login(RUserCredentials userCredentials) throws ResponseStatusException {
         UserDTO user = this.userService.getUserByEmail(userCredentials.getEmail());
         if (user == null) {
@@ -74,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Cacheable(value = "userCache", key = "#email")
     public UserWithoutPasswordDTO autoLogin(String email) throws ResponseStatusException {
         UserDTO user = this.userService.getUserByEmail(email);
 
