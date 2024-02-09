@@ -189,7 +189,7 @@ class RoomControllerTest {
         );
         //Mock creating room service
         when(roomService.createRoom(roomWithoutUserDTO, userEmail)).thenReturn(roomWithoutUserDTO);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/rooms/publicRoom/" + roomID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rooms/public-room/" + roomID))
                 .andExpect(status().isOk());
     }
 
