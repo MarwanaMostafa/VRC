@@ -18,7 +18,6 @@ public class HdrisAssetsService {
     private ConcurrentHashMap<String , List<String>> filteredNames = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String , String> lastQuery = new ConcurrentHashMap<>();
 
-    @Cacheable(value = "hdrisObjectCache", key = "#query +#pageNumber+#pageSize")
     public JSONObject fetchObjects(String userEmail,String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
         if(hdrisObjectsNames.isEmpty()){
             PolyHavenHdrisObjectsList polyHavenHdrisObjectsList = new PolyHavenHdrisObjectsList();

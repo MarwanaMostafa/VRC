@@ -24,7 +24,6 @@ public class ModelsAssetsService {
     private ConcurrentHashMap<String , String> lastQuery = new ConcurrentHashMap<>();
     private final JsonParser jsonParser = new JsonParser();
 
-    @Cacheable(value = "modelObjectCache", key = "#query +#pageNumber+#pageSize")
     public JSONObject fetchObjects(String userEmail , String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
         if(modelsObjects.isEmpty()){
             fetchAllObjects();
