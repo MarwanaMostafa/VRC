@@ -4,6 +4,7 @@ import com.example.vrc.assets.services.objects.PolyHavenHdrisObjectsList;
 import com.example.vrc.assets.services.singleObject.PolyHavenHdriObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class HdrisAssetsService {
     private ConcurrentHashMap<String , List<String>> filteredNames = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String , String> lastQuery = new ConcurrentHashMap<>();
 
+    @Cacheable(value = "hdrisObjectCache", key = "#query +#pageNumber+#pageSize")
     public JSONObject fetchObjects(String userEmail,String query , int pageNumber , int pageSize) throws IOException, InterruptedException {
         if(hdrisObjectsNames.isEmpty()){
             PolyHavenHdrisObjectsList polyHavenHdrisObjectsList = new PolyHavenHdrisObjectsList();
