@@ -1,73 +1,88 @@
 package com.example.vrc.rooms.controllers;
 
+import com.example.vrc.authentication.DTOs.UserDTO;
+import com.example.vrc.authentication.DTOs.UserWithoutPasswordDTO;
+import com.example.vrc.authentication.mappers.UserMapper;
+import com.example.vrc.authentication.mappers.UserWithoutPasswordMapper;
+import com.example.vrc.authentication.models.UserEntity;
+import com.example.vrc.authentication.services.UserService;
+import com.example.vrc.rooms.DTOs.RoomDTO;
 import com.example.vrc.rooms.DTOs.RoomWithoutUserDTO;
+import com.example.vrc.rooms.DTOs.SharedRoomDTO;
+import com.example.vrc.rooms.mappers.RoomMapper;
+import com.example.vrc.rooms.models.RoomEntity;
+import com.example.vrc.rooms.models.SharedRoomEntity;
+import com.example.vrc.rooms.repositories.RoomRepository;
 import com.example.vrc.rooms.services.RoomService;
+import com.example.vrc.rooms.services.impl.RoomServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Errors;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(RoomController.class)
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 class RoomControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private RoomService roomService;
+    @Mock
+    private RoomService roomService = new RoomServiceImpl();
 
     @Mock
     private SimpMessagingTemplate messagingTemplate;
-
     @Mock
     private Authentication authentication;
-
     @Mock
     private Errors errors;
-
     @Mock
-    RoomWithoutUserDTO roomDTO = new RoomWithoutUserDTO(
-            UUID.randomUUID(),
-            1L,
-            "Test title",
-            "Test Describtion",
-            "Test State",
-            true
-    );
+    private UserService userService;
+    @Mock
+    private RoomMapper roomMapper;
+    @Mock
+    private RoomRepository roomRepository;
+    @Mock
+    private UserMapper userMapper;
+    @Mock
+    private UserWithoutPasswordMapper userWithoutPasswordMapper;
 
     @InjectMocks
     private RoomController roomController;
@@ -75,56 +90,305 @@ class RoomControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private RoomWithoutUserDTO roomWithoutUserDTO;
+    private UserDTO userDTO;
+    private RoomDTO roomDTO;
+    private String userEmail = "test@example.com";
+    private RoomEntity roomEntity;
+    private String roomID = "123e4567-e89b-12d3-a456-556642440000";
+    private UUID roomUUID = UUID.fromString(roomID);;
+    private UserEntity userEntity;
+
+
+
+    @WithMockUser(username = "test@example.com")
     @Test
     void createRoom_ReturnCreatedRoom() throws Exception {
+        roomID="123e4567-e89b-12d3-a456-556642440000";
+        roomUUID=UUID.fromString("123e4567-e89b-12d3-a456-556642440000");
+        // Mock authenticated user
+        UserDetails userDetails = new User("test@example.com", "password", Collections.emptyList());
+        Mockito.when(authentication.getName()).thenReturn(userDetails.getUsername());
+        // Mock userDTO
+        String userEmail = "yousef@test.com";
+        UserDTO userDTO = new UserDTO(
+                11L,
+                "test fName",
+                "test lName",
+                userEmail,
+                "testPassw"
+        );
+        when(this.userWithoutPasswordMapper.toDto(any())).thenReturn(new UserWithoutPasswordDTO(
+                15L,
+                "test fName","test lName",userEmail,"testPassw"
+        ));
+        when(userService.getUserByEmail(userEmail)).thenReturn(userDTO);
 
-        given(authentication.getName()).willReturn("test@example.com");
-        given(roomService.createRoom(any(RoomWithoutUserDTO.class), anyString())).willReturn(roomDTO);
+        UserEntity userEntity = new UserEntity();
+        when(this.userMapper.toEntity(any(UserDTO.class))).thenReturn(userEntity);
 
-        ResultActions response = mockMvc.perform(post("/api/rooms/create").
-                contentType(MediaType.APPLICATION_JSON).
-                content(objectMapper.writeValueAsString(roomDTO)));
-        response.andExpect(MockMvcResultMatchers.status().isCreated());
+        // Mock room DTO
+        roomWithoutUserDTO=new RoomWithoutUserDTO(
+                roomUUID,
+                "Test Title",
+                "Test describtion",
+                "Test state",
+                true
+
+        );
+
+        // Mock room service
+        Mockito.when(roomService.createRoom(roomWithoutUserDTO, userEmail))
+                .thenReturn(roomWithoutUserDTO);
+
+        // Execute controller method
+        ResponseEntity<RoomWithoutUserDTO> responseEntity = roomController.createRoom(authentication, roomWithoutUserDTO, errors);
+
+        // Verify response
+        Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+
     }
 
+
     @Test
-    void createRoom_InvalidInput_ThrowsResponseStatusException() {
-        // Given
-        String userEmail = "user@example.com";
+    void createRoom_InvalidInput_ThrowsResponseStatusException()throws Exception {
+
         when(authentication.getName()).thenReturn(userEmail);
         when(errors.hasErrors()).thenReturn(true);
 
-        // When / Then
-        assertThatThrownBy(() -> roomController.createRoom(authentication, roomDTO, errors))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.BAD_REQUEST);
+        // Act
+        ResponseEntity<RoomWithoutUserDTO> responseEntity = roomController.createRoom(authentication, roomWithoutUserDTO, errors);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
-    void addCollaborator() {
+    void canAddCollaborator_InvalidInput() throws Exception {
+        // Prepare invalid input with an invalid email address
+        SharedRoomDTO sharedRoomDTO = new SharedRoomDTO(roomID, "invalid_email");
+
+        // Perform the request and expect a 400 Bad Request
+        mockMvc.perform(post("/api/rooms/add-collaborator")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(sharedRoomDTO)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void sharedRoom() {
+    void canSharedRoom()throws Exception {
+        roomID="123e4567-e89b-12d3-a456-556642440000";
+        roomUUID=UUID.fromString("123e4567-e89b-12d3-a456-556642440000");
+        roomWithoutUserDTO=new RoomWithoutUserDTO(
+                roomUUID,
+                "Test Title",
+                "Test describtion",
+                "Test state",
+                true
+
+        );
+        //Mock creating room service
+        when(roomService.createRoom(roomWithoutUserDTO, userEmail)).thenReturn(roomWithoutUserDTO);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rooms/public-room/" + roomID))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void canGetRoomByID() throws Exception {
+        // Given
+        String roomId = "123e4567-e89b-12d3-a456-556642440000";
+        UUID roomUUID = UUID.fromString(roomId);
+        RoomEntity roomEntity = new RoomEntity(
+                roomUUID,
+                "Test Room",
+                "Test Description",
+                "Test State",
+                true,
+                new UserEntity(),
+                new ArrayList<>()
+        );
+        //Mock RoomWithoutUserDTO
+        RoomWithoutUserDTO roomWithoutUserDTO = new RoomWithoutUserDTO();
+        roomWithoutUserDTO.setTitle("Test Room");
+        roomWithoutUserDTO.setDescription("Test Description");
+        roomWithoutUserDTO.setState("Test State");
+        roomWithoutUserDTO.setIsPublic(true);
+
+        when(roomRepository.findById(roomUUID)).thenReturn(Optional.of(roomEntity));
+        when(roomMapper.toRoomWithoutUserDto(any(RoomEntity.class))).thenReturn(roomWithoutUserDTO);
+
+        // When
+        RoomWithoutUserDTO result = roomService.shareRoomById(roomId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("Test Room", result.getTitle());
+        assertEquals("Test Description", result.getDescription());
+        assertEquals("Test State", result.getState());
+        assertTrue(result.getIsPublic());
+
     }
 
     @Test
-    void getRoomByID() {
-    }
+    void canGetRooms() {
 
-    @Test
-    void getRooms() {
+        // Given
+        userDTO = userService.getUserByEmail(userEmail);
+        List<RoomEntity> rooms = new ArrayList<>();
+        List<SharedRoomEntity> sharedrooms = new ArrayList<>();
+        RoomEntity room1 = new RoomEntity(
+                UUID.randomUUID(),
+                "Room 1 Title",
+                "Room 1 Description",
+                "Room 1 State",
+                true,
+                this.userMapper.toEntity(userDTO),
+                sharedrooms
+        );
+        rooms.add(room1);
+
+        RoomEntity room2 = new RoomEntity(
+                UUID.randomUUID(),
+                "Room 2 Title",
+                "Room 2 Description",
+                "Room 2 State",
+                false,
+                this.userMapper.toEntity(userDTO),
+                sharedrooms
+        );
+        rooms.add(room2);
+
+        // Mock the repository
+        when(roomRepository.findAllByUserEmailIgnoreCase(userEmail)).thenReturn(rooms);
+
+        // Mock
+        List<RoomWithoutUserDTO> expectedRooms = new ArrayList<>();
+        // Add corresponding RoomWithoutUserDTO objects to the expected list
+        expectedRooms.add(new RoomWithoutUserDTO());
+        expectedRooms.add(new RoomWithoutUserDTO());
+        when(this.roomMapper.toDtoList(rooms)).thenReturn(expectedRooms);
+
+        // When
+        List<RoomWithoutUserDTO> actualRooms = roomService.getRooms(userEmail);
     }
 
     @Test
     void getSharedRooms() {
+        // Mock authenticated user
+        UserDetails userDetails = new User(userEmail, "password", Collections.emptyList());
+        Mockito.when(authentication.getName()).thenReturn(userDetails.getUsername());
+
+        // Mock shared rooms
+        List<RoomWithoutUserDTO> sharedRooms = new ArrayList<>();
+        RoomWithoutUserDTO room1 = new RoomWithoutUserDTO(
+                UUID.randomUUID(),
+                "Room 1 Title",
+                "Room 1 Description",
+                "Room 1 State",
+                false
+        );
+
+        sharedRooms.add(room1);
+
+        RoomWithoutUserDTO room2 = new RoomWithoutUserDTO(
+                UUID.randomUUID(),
+                "Room 2 Title",
+                "Room 2 Description",
+                "Room 2 State",
+                false
+        );
+        sharedRooms.add(room2);
+
+        // Mock room service
+        Mockito.when(roomService.getSharedRooms(userDetails.getUsername())).thenReturn(sharedRooms);
+
+        // Execute controller method
+        ResponseEntity<List<RoomWithoutUserDTO>> responseEntity = roomController.getSharedRooms(authentication);
+
+        // Verify response
+        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     void updateRoom() {
+        // Mock authenticated user
+        UserDetails userDetails = new User("test_user", "password", Collections.emptyList());
+        Mockito.when(authentication.getName()).thenReturn(userDetails.getUsername());
+
+        // Mock room DTO
+        RoomWithoutUserDTO roomDTO = new RoomWithoutUserDTO(
+                UUID.randomUUID(),
+                "Room 1 Title",
+                "Room 1 Description",
+                "Room 1 State",
+                false
+        );
+
+        // Mock updated room
+        RoomWithoutUserDTO updatedRoom = new RoomWithoutUserDTO(
+                UUID.randomUUID(),
+                "updatedRoom Title",
+                "updatedRoom Description",
+                "updatedRoom State",
+                false
+        );
+
+
+        // Mock room service
+        Mockito.when(roomService.updateRoom(Mockito.anyString(), Mockito.eq(roomDTO), Mockito.anyString()))
+                .thenReturn(updatedRoom);
+
+        // Execute controller method
+        ResponseEntity<RoomWithoutUserDTO> responseEntity = roomController.updateRoom(authentication, roomID, roomDTO, errors);
+
+        // Verify response
+        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assert.assertEquals(updatedRoom, responseEntity.getBody());
     }
 
     @Test
-    void sendRoomData() {
+    void canGetCollaborators(){
+        // Mock authenticated user
+        UserDetails userDetails = new User(userEmail, "password", Collections.emptyList());
+        Mockito.when(authentication.getName()).thenReturn(userDetails.getUsername());
+
+
+        // Mock collaborators
+        List<String> collaborators = Arrays.asList("collaborator1@example.com", "collaborator2@example.com");
+
+        // Mock room service
+        Mockito.when(roomService.getAllCollaborator(roomID, userDetails.getUsername()))
+                .thenReturn(collaborators);
+
+        // Execute controller method
+        ResponseEntity<List<String>> responseEntity = roomController.getCollaborators(authentication, roomID);
+
+        // Verify response
+        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assert.assertEquals(collaborators, responseEntity.getBody());
+    }
+
+    @Test
+    void canDeleteCollaborator(){
+        // Mock authenticated user
+        UserDetails userDetails = new User(userEmail, "password", Collections.emptyList());
+        Mockito.when(authentication.getName()).thenReturn(userDetails.getUsername());
+
+        // Mock shared room DTO
+        SharedRoomDTO sharedRoomDTO = new SharedRoomDTO();
+        sharedRoomDTO.setId(roomID);
+        sharedRoomDTO.setCollaboratorEmail("collaborator@example.com");
+
+        // Mock room service
+        Mockito.when(roomService.deleteCollaborator(sharedRoomDTO, userDetails.getUsername()))
+                .thenReturn("Collaborator successfully removed");
+
+        // Execute controller method
+        ResponseEntity<String> responseEntity = roomController.DeleteCollaborator(authentication, sharedRoomDTO, errors);
+
+        // Verify response
+        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assert.assertEquals("Collaborator successfully removed", responseEntity.getBody());
     }
 }
