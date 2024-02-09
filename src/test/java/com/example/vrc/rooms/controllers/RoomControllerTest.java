@@ -17,44 +17,34 @@ import com.example.vrc.rooms.services.RoomService;
 import com.example.vrc.rooms.services.impl.RoomServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Errors;
 
 import java.util.*;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -130,6 +120,7 @@ class RoomControllerTest {
         // Mock room DTO
         roomWithoutUserDTO=new RoomWithoutUserDTO(
                 roomUUID,
+                1L,
                 "Test Title",
                 "Test describtion",
                 "Test state",
@@ -181,6 +172,7 @@ class RoomControllerTest {
         roomUUID=UUID.fromString("123e4567-e89b-12d3-a456-556642440000");
         roomWithoutUserDTO=new RoomWithoutUserDTO(
                 roomUUID,
+                1L,
                 "Test Title",
                 "Test describtion",
                 "Test state",
@@ -283,6 +275,7 @@ class RoomControllerTest {
         List<RoomWithoutUserDTO> sharedRooms = new ArrayList<>();
         RoomWithoutUserDTO room1 = new RoomWithoutUserDTO(
                 UUID.randomUUID(),
+                1L,
                 "Room 1 Title",
                 "Room 1 Description",
                 "Room 1 State",
@@ -293,6 +286,7 @@ class RoomControllerTest {
 
         RoomWithoutUserDTO room2 = new RoomWithoutUserDTO(
                 UUID.randomUUID(),
+                1L,
                 "Room 2 Title",
                 "Room 2 Description",
                 "Room 2 State",
@@ -319,6 +313,7 @@ class RoomControllerTest {
         // Mock room DTO
         RoomWithoutUserDTO roomDTO = new RoomWithoutUserDTO(
                 UUID.randomUUID(),
+                1L,
                 "Room 1 Title",
                 "Room 1 Description",
                 "Room 1 State",
@@ -328,6 +323,7 @@ class RoomControllerTest {
         // Mock updated room
         RoomWithoutUserDTO updatedRoom = new RoomWithoutUserDTO(
                 UUID.randomUUID(),
+                1L,
                 "updatedRoom Title",
                 "updatedRoom Description",
                 "updatedRoom State",
