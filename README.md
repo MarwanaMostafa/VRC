@@ -1,6 +1,5 @@
 # VRC
 
----
 ## Motivation 🌟
 
 **The Power of Imagination: Unlocking Dreams and Enhancing Learning**
